@@ -259,10 +259,11 @@ export function HomeTab({
                     borderRadius: "8px",
                     fontSize: "12px",
                   }}
-                  formatter={(value: number) => [
-                    `₹${value.toFixed(2)}/gm`,
-                    "Price",
-                  ]}
+                  formatter={(value) =>
+                    typeof value === "number"
+                      ? `₹${value.toLocaleString()}`
+                      : ""
+                  }
                 />
                 <Area
                   type="monotone"
@@ -300,7 +301,7 @@ export function HomeTab({
 
         {/* Quick Actions */}
         <div className="mb-6">
-          <h2 className="text-black mb-4 dark:text-white">Quick Actions</h2>
+          <h2 className="mb-4 text-black dark:text-white">Quick Actions</h2>
           <div className="space-y-3">
             {/* Primary Actions - Full Width */}
             <button
@@ -487,7 +488,9 @@ export function HomeTab({
 
         {/* Partner Highlight */}
         <div className="mb-6">
-          <h2 className="text-black mb-4 dark:text-white">Nearest Zold Partner</h2>
+          <h2 className="mb-4 text-black dark:text-white">
+            Nearest Zold Partner
+          </h2>
           <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-800">
             <div className="mb-3 flex items-start justify-between">
               <div className="flex-1">
@@ -516,7 +519,9 @@ export function HomeTab({
 
         {/* Promotions */}
         <div className="mb-6">
-          <h2 className="text-black mb-4 dark:text-white">Offers & Promotions</h2>
+          <h2 className="mb-4 text-black dark:text-white">
+            Offers & Promotions
+          </h2>
           <div className="space-y-3">
             <div className="rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white dark:from-purple-600 dark:to-pink-600">
               <div className="flex items-start justify-between">
