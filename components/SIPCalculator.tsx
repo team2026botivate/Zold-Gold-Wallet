@@ -186,8 +186,6 @@ export function SIPCalculator({ onClose }: SIPCalculatorProps) {
                     contentStyle={{
                       backgroundColor: "#ffffff",
                       borderColor: "#e5e7eb",
-                      borderRadius: "0.5rem",
-                      color: "#1f2937",
                     }}
                   />
                 </PieChart>
