@@ -34,6 +34,8 @@ import { useState } from "react";
 
 interface HomeTabProps {
   onBuyGold: () => void;
+  onSellGold: () => void;
+  onJewellery: () => void;
   onOpenSIPCalculator?: () => void;
   onOpenReferral?: () => void;
   onOpenGiftGold?: () => void;
@@ -43,6 +45,8 @@ interface HomeTabProps {
 
 export function HomeTab({
   onBuyGold,
+  onSellGold,
+  onJewellery,
   onOpenSIPCalculator,
   onOpenReferral,
   onOpenGiftGold,
@@ -323,7 +327,7 @@ export function HomeTab({
 
             {/* Secondary Actions - 2 Column Grid */}
             <div className="grid grid-cols-2 gap-3">
-              <button className="flex flex-col items-center gap-2 rounded-xl border border-gray-200 bg-white p-4 text-gray-700 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-gray-300 dark:hover:bg-neutral-700">
+              <button onClick={onSellGold} className="flex flex-col items-center gap-2 rounded-xl border border-gray-200 bg-white p-4 text-gray-700 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-gray-300 dark:hover:bg-neutral-700">
                 <TrendingDown className="h-6 w-6" />
                 <span>Sell Gold</span>
               </button>
@@ -341,7 +345,7 @@ export function HomeTab({
                 <Users className="h-6 w-6" />
                 <span>Refer & Earn</span>
               </button>
-              <button className="flex flex-col items-center gap-2 rounded-xl border border-gray-200 bg-white p-4 text-gray-700 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-gray-300 dark:hover:bg-neutral-700">
+              <button onClick={onJewellery} className="flex flex-col items-center gap-2 rounded-xl border border-gray-200 bg-white p-4 text-gray-700 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-gray-300 dark:hover:bg-neutral-700">
                 <ShoppingBag className="h-6 w-6" />
                 <span>Jewellery</span>
               </button>

@@ -13,7 +13,11 @@ import {
 } from "lucide-react";
 import { ZoldLogoHorizontal } from "@/components/ZoldLogo";
 
-export function LoansTab() {
+interface LoansTabProps {
+  onOpenApplyLoan: () => void;
+}
+
+export function LoansTab({ onOpenApplyLoan }: LoansTabProps) {
   const [selectedTab, setSelectedTab] = useState<"overview" | "active">(
     "overview",
   );
@@ -76,7 +80,7 @@ export function LoansTab() {
         </div>
       </div>
 
-      <div className="-mt-4 px-6">
+      <div className="-mt-4 px-6 ">
         {/* Tab Selector */}
         <div className="mb-6 flex rounded-xl bg-white p-1 shadow-lg dark:bg-neutral-800 dark:shadow-neutral-900/50">
           <button
@@ -155,7 +159,7 @@ export function LoansTab() {
                       </div>
                     </div>
                   </div>
-                  <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#3D3066] py-3 text-white transition-colors hover:bg-[#5C4E7F] dark:bg-[#4D3F7F] dark:hover:bg-[#5C4E9F]">
+                  <button onClick={onOpenApplyLoan} className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#3D3066] py-3 text-white transition-colors hover:bg-[#5C4E7F] dark:bg-[#4D3F7F] dark:hover:bg-[#5C4E9F]">
                     Apply Now
                     <ChevronRight className="h-5 w-5" />
                   </button>

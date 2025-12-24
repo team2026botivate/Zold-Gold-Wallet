@@ -35,6 +35,7 @@ import { FAQPage } from "@/components/FAQPage";
 import { TermsConditionsPage } from "@/components/Term&Condition";
 import { PrivacyPolicyPage } from "@/components/Privacy&Policy";
 import { RiskDisclosurePage } from "@/components/RiskDisclosure";
+import { SecurityPrivacyPage } from "../SecurityPrivacyPage";
 interface ProfileTabProps {
   user: any;
 }
@@ -56,7 +57,8 @@ export function ProfileTab({ user }: ProfileTabProps) {
   const [showTermsConditions, setShowTermsConditions] = useState(false);
   const [showFAQ, setShowFAQ] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
-  const [showRiskDisclosure, setShowRiskDisclosure] = useState(false)
+  const [showRiskDisclosure, setShowRiskDisclosure] = useState(false);
+  const [showPrivacySecurity, setShowPrivacySecurity] = useState(false)
   const [notifications, setNotifications] = useState({
     priceAlerts: true,
     transactions: true,
@@ -64,16 +66,15 @@ export function ProfileTab({ user }: ProfileTabProps) {
   });
 
   const handleCallSupport = () => {
-  window.location.href = 'tel:+911234567890';
-};
+    window.location.href = "tel:+911234567890";
+  };
 
-const handleChatSupport = () => {
-  const phoneNumber = '+911234567890';
-  const message = 'Hello, I need support';
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, '_blank');
-};
-
+  const handleChatSupport = () => {
+    const phoneNumber = "+911234567890";
+    const message = "Hello, I need support";
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
+  };
 
   useEffect(() => {
     // Sync with theme provider
@@ -107,19 +108,45 @@ const handleChatSupport = () => {
   };
 
   useEffect(() => {
-  if (showPersonalInfo || showKYCStatus || showBankAccounts || showSavedAddresses || showPaymentMethods || showNotifications || showLanguages || showFAQ || showTermsConditions || showPrivacyPolicy || showRiskDisclosure) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "unset";
-  }
-  return () => {
-    document.body.style.overflow = "unset";
-  };
-}, [showPersonalInfo, showKYCStatus, showBankAccounts, showSavedAddresses, showPaymentMethods, showNotifications, showLanguages, showFAQ, showTermsConditions, showPrivacyPolicy, showRiskDisclosure]);
+    if (
+      showPersonalInfo ||
+      showKYCStatus ||
+      showBankAccounts ||
+      showSavedAddresses ||
+      showPaymentMethods ||
+      showNotifications ||
+      showLanguages ||
+      showFAQ ||
+      showTermsConditions ||
+      showPrivacyPolicy ||
+      showRiskDisclosure ||
+      showPrivacySecurity
+    ) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [
+    showPersonalInfo,
+    showKYCStatus,
+    showBankAccounts,
+    showSavedAddresses,
+    showPaymentMethods,
+    showNotifications,
+    showLanguages,
+    showFAQ,
+    showTermsConditions,
+    showPrivacyPolicy,
+    showRiskDisclosure,
+    showPrivacySecurity
+  ]);
 
   return (
     <>
-      <div className="min-h-screen pb-6 dark:bg-neutral-900 dark:text-gray-100">
+      <div className="min-h-screen overflow-x-hidden pb-6 dark:bg-neutral-900 dark:text-gray-100">
         {/* Header */}
         <div className="rounded-b-3xl bg-gradient-to-br from-[#3D3066] via-[#5C4E7F] to-[#8B7FA8] px-6 pt-6 pb-8">
           <h1 className="mb-6 text-white">Profile</h1>
@@ -292,7 +319,7 @@ const handleChatSupport = () => {
                   onClick={handleThemeToggle}
                   className={`relative h-6 w-12 rounded-full transition-colors ${
                     darkMode
-                      ? "bg-[#3D3066] dark:bg-[#4D3F7F]"
+                      ? "bg-[#8b6fee] dark:bg-[#8b6fee]"
                       : "bg-gray-300 dark:bg-neutral-600"
                   }`}
                   aria-label={
@@ -322,7 +349,7 @@ const handleChatSupport = () => {
               </button>
 
               {/* Security */}
-              <button className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50">
+              <button onClick={()=>setShowPrivacySecurity(true)} className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50">
                 <div className="flex items-center gap-3">
                   <Lock className="h-5 w-5 text-gray-600 dark:text-neutral-400" />
                   <span className="text-gray-900 dark:text-white">
@@ -333,7 +360,10 @@ const handleChatSupport = () => {
               </button>
 
               {/* Language */}
-              <button onClick={()=> setShowLanguages(true)} className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50">
+              <button
+                onClick={() => setShowLanguages(true)}
+                className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50"
+              >
                 <div className="flex items-center gap-3">
                   <Globe className="h-5 w-5 text-gray-600 dark:text-neutral-400" />
                   <span className="text-gray-900 dark:text-white">
@@ -349,7 +379,7 @@ const handleChatSupport = () => {
               </button>
 
               {/* Biometric */}
-              <div className="flex w-full items-center justify-between px-4 py-4">
+              {/* <div className="flex w-full items-center justify-between px-4 py-4">
                 <div className="flex items-center gap-3">
                   <Smartphone className="h-5 w-5 text-gray-600 dark:text-neutral-400" />
                   <span className="text-gray-900 dark:text-white">
@@ -362,7 +392,7 @@ const handleChatSupport = () => {
                 >
                   <div className="absolute top-1 left-1 h-4 w-4 translate-x-7 rounded-full bg-white transition-transform" />
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -372,14 +402,20 @@ const handleChatSupport = () => {
               <h3 className="text-black dark:text-white">Help & Support</h3>
             </div>
             <div>
-              <button onClick={()=> setShowFAQ(true)} className="flex w-full items-center justify-between px-4 py-4 transition-colors hover:bg-gray-50 dark:hover:bg-neutral-700/50">
+              <button
+                onClick={() => setShowFAQ(true)}
+                className="flex w-full items-center justify-between px-4 py-4 transition-colors hover:bg-gray-50 dark:hover:bg-neutral-700/50"
+              >
                 <div className="flex items-center gap-3">
                   <HelpCircle className="h-5 w-5 text-gray-600 dark:text-neutral-400" />
                   <span className="text-gray-900 dark:text-white">FAQ</span>
                 </div>
                 <ChevronRight className="h-5 w-5 text-gray-400 dark:text-neutral-500" />
               </button>
-              <button onClick={handleChatSupport} className="flex w-full items-center justify-between border-t border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50">
+              <button
+                onClick={handleChatSupport}
+                className="flex w-full items-center justify-between border-t border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50"
+              >
                 <div className="flex items-center gap-3">
                   <HelpCircle className="h-5 w-5 text-gray-600 dark:text-neutral-400" />
                   <span className="text-gray-900 dark:text-white">
@@ -388,7 +424,10 @@ const handleChatSupport = () => {
                 </div>
                 <ChevronRight className="h-5 w-5 text-gray-400 dark:text-neutral-500" />
               </button>
-              <button onClick={handleCallSupport} className="flex w-full items-center justify-between border-t border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50">
+              <button
+                onClick={handleCallSupport}
+                className="flex w-full items-center justify-between border-t border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50"
+              >
                 <div className="flex items-center gap-3">
                   <HelpCircle className="h-5 w-5 text-gray-600 dark:text-neutral-400" />
                   <span className="text-gray-900 dark:text-white">
@@ -411,7 +450,10 @@ const handleChatSupport = () => {
               <h3 className="text-black dark:text-white">Legal</h3>
             </div>
             <div>
-              <button onClick={()=> setShowTermsConditions(true)} className="flex w-full items-center justify-between px-4 py-4 transition-colors hover:bg-gray-50 dark:hover:bg-neutral-700/50">
+              <button
+                onClick={() => setShowTermsConditions(true)}
+                className="flex w-full items-center justify-between px-4 py-4 transition-colors hover:bg-gray-50 dark:hover:bg-neutral-700/50"
+              >
                 <div className="flex items-center gap-3">
                   <FileText className="h-5 w-5 text-gray-600 dark:text-neutral-400" />
                   <span className="text-gray-900 dark:text-white">
@@ -420,7 +462,10 @@ const handleChatSupport = () => {
                 </div>
                 <ChevronRight className="h-5 w-5 text-gray-400 dark:text-neutral-500" />
               </button>
-              <button onClick={()=> setShowPrivacyPolicy(true)} className="flex w-full items-center justify-between border-t border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50">
+              <button
+                onClick={() => setShowPrivacyPolicy(true)}
+                className="flex w-full items-center justify-between border-t border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50"
+              >
                 <div className="flex items-center gap-3">
                   <FileText className="h-5 w-5 text-gray-600 dark:text-neutral-400" />
                   <span className="text-gray-900 dark:text-white">
@@ -429,7 +474,10 @@ const handleChatSupport = () => {
                 </div>
                 <ChevronRight className="h-5 w-5 text-gray-400 dark:text-neutral-500" />
               </button>
-              <button onClick={()=>setShowRiskDisclosure(true)} className="flex w-full items-center justify-between border-t border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50">
+              <button
+                onClick={() => setShowRiskDisclosure(true)}
+                className="flex w-full items-center justify-between border-t border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50"
+              >
                 <div className="flex items-center gap-3">
                   <FileText className="h-5 w-5 text-gray-600 dark:text-neutral-400" />
                   <span className="text-gray-900 dark:text-white">
@@ -442,7 +490,7 @@ const handleChatSupport = () => {
           </div>
 
           {/* App Info */}
-          <div className="mb-4 rounded-2xl bg-white p-4 shadow-lg dark:bg-neutral-800 dark:shadow-neutral-900/50">
+          <div className="mb-4 rounded-2xl bg-white p-4 dark:bg-neutral-800 dark:shadow-neutral-900/50">
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600 dark:text-neutral-400">
                 App Version
@@ -468,82 +516,113 @@ const handleChatSupport = () => {
       </div>
 
       {/* Personal Information Page */}
-      <PersonalInfoPage
-        user={user}
-        isOpen={showPersonalInfo}
-        onClose={() => setShowPersonalInfo(false)}
-      />
+      {showPersonalInfo && (
+        <PersonalInfoPage
+          user={user}
+          isOpen={showPersonalInfo}
+          onClose={() => setShowPersonalInfo(false)}
+        />
+      )}
 
       {/* KYC Status Page */}
-      <KYCStatusPage
-        user={user}
-        isOpen={showKYCStatus}
-        onClose={() => setShowKYCStatus(false)}
-        currentStatus={kycStatus}
-      />
+      {showKYCStatus && (
+        <KYCStatusPage
+          user={user}
+          isOpen={showKYCStatus}
+          onClose={() => setShowKYCStatus(false)}
+          currentStatus={kycStatus}
+        />
+      )}
 
       {/* Bank Accounts Page */}
-      <BankAccountsPage
-        user={user}
-        isOpen={showBankAccounts}
-        onClose={() => setShowBankAccounts(false)}
-      />
+      {showBankAccounts && (
+        <BankAccountsPage
+          user={user}
+          isOpen={showBankAccounts}
+          onClose={() => setShowBankAccounts(false)}
+        />
+      )}
 
       {/* Saved Address Page */}
-      <SavedAddressesPage
-        user={user}
-        isOpen={showSavedAddresses}
-        onClose={() => setShowSavedAddresses(false)}
-      />
+      {showSavedAddresses && (
+        <SavedAddressesPage
+          user={user}
+          isOpen={showSavedAddresses}
+          onClose={() => setShowSavedAddresses(false)}
+        />
+      )}
 
       {/* Payment Methods Page */}
-      <PaymentMethodsPage
-        user={user}
-        isOpen={showPaymentMethods}
-        onClose={() => setShowPaymentMethods(false)}
-      />
+      {showPaymentMethods && (
+        <PaymentMethodsPage
+          user={user}
+          isOpen={showPaymentMethods}
+          onClose={() => setShowPaymentMethods(false)}
+        />
+      )}
 
       {/* Notifications Page */}
-      <NotificationsPage
-        user={user}
-        isOpen={showNotifications}
-        onClose={() => setShowNotifications(false)}
-      />
+      {showNotifications && (
+        <NotificationsPage
+          user={user}
+          isOpen={showNotifications}
+          onClose={() => setShowNotifications(false)}
+        />
+      )}
 
       {/* Languages Page */}
-      <LanguagesPage
-        user={user}
-        isOpen={showLanguages}
-        onClose={() => setShowLanguages(false)}
-      />
+      {showLanguages && (
+        <LanguagesPage
+          user={user}
+          isOpen={showLanguages}
+          onClose={() => setShowLanguages(false)}
+        />
+      )}
 
       {/* FAQ Page */}
-      <FAQPage
-        user={user}
-        isOpen={showFAQ}
-        onClose={() => setShowFAQ(false)}
-      />
+      {showFAQ && (
+        <FAQPage
+          user={user}
+          isOpen={showFAQ}
+          onClose={() => setShowFAQ(false)}
+        />
+      )}
 
       {/* Terms & Conditions Page */}
-      < TermsConditionsPage
-        user={user}
-        isOpen={showTermsConditions}
-        onClose={() => setShowTermsConditions(false)}
-      />
+      {showTermsConditions && (
+        <TermsConditionsPage
+          user={user}
+          isOpen={showTermsConditions}
+          onClose={() => setShowTermsConditions(false)}
+        />
+      )}
 
       {/* Privacy & Policy Page */}
-      < PrivacyPolicyPage
-        user={user}
-        isOpen={showPrivacyPolicy}
-        onClose={() => setShowPrivacyPolicy(false)}
-      />
+      {showPrivacyPolicy && (
+        <PrivacyPolicyPage
+          user={user}
+          isOpen={showPrivacyPolicy}
+          onClose={() => setShowPrivacyPolicy(false)}
+        />
+      )}
 
       {/* Risk Disclosure Page */}
-      < RiskDisclosurePage
-        user={user}
-        isOpen={showRiskDisclosure}
-        onClose={() => setShowRiskDisclosure(false)}
-      />
+      {showRiskDisclosure && (
+        <RiskDisclosurePage
+          user={user}
+          isOpen={showRiskDisclosure}
+          onClose={() => setShowRiskDisclosure(false)}
+        />
+      )}
+
+      {/* Privacy Security Page */}
+      {showPrivacySecurity && (
+        <SecurityPrivacyPage
+          user={user}
+          isOpen={showPrivacySecurity}
+          onClose={() => setShowPrivacySecurity(false)}
+        />
+      )}
     </>
   );
 }

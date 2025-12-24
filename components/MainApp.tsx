@@ -18,11 +18,16 @@ import { PartnersTab } from "./tabs/PartnersTab";
 import { LoansTab } from "./tabs/LoansTab";
 import { ProfileTab } from "./tabs/ProfileTab";
 import { BuyGoldFlow } from "./flows/BuyGoldFlow";
+import { SellGoldFlow } from "./flows/SellGoldFlow";
+import { ManageSIPPage } from "./ManageSIPPage";
+import { JewelleryFlow } from "./JewelleryPage";
 import { SIPCalculator } from "./SIPCalculator";
 import { ReferralProgram } from "./ReferralProgram";
 import { GiftGold } from "./GiftGold";
 import { AuspiciousDays } from "./AuspiciousDays";
 import { GoldGoals } from "./GoldGoals";
+import { ApplyLoan } from "./ApplyLoan";
+
 
 type Tab = "home" | "wallet" | "partners" | "loans" | "profile";
 
@@ -33,11 +38,15 @@ interface MainAppProps {
 export function MainApp({ user }: MainAppProps) {
   const [activeTab, setActiveTab] = useState<Tab>("home");
   const [showBuyFlow, setShowBuyFlow] = useState(false);
+  const [showSellFlow, setShowSellFlow] = useState(false);
+  const [showManageSIP, setShowManageSIP] = useState(false);
+  const [showJewellery, setShowJewellery] = useState(false);
   const [showSIPCalculator, setShowSIPCalculator] = useState(false);
   const [showReferral, setShowReferral] = useState(false);
   const [showGiftGold, setShowGiftGold] = useState(false);
   const [showAuspiciousDays, setShowAuspiciousDays] = useState(false);
   const [showGoldGoals, setShowGoldGoals] = useState(false);
+  const [showApplyLoan, setShowApplyLoan] = useState(false);
   const [showQuickMenu, setShowQuickMenu] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -90,6 +99,18 @@ export function MainApp({ user }: MainAppProps) {
     return <BuyGoldFlow onClose={() => setShowBuyFlow(false)} />;
   }
 
+  if (showSellFlow) {
+    return <SellGoldFlow onClose={() => setShowSellFlow(false)} />;
+  }
+  if (showManageSIP) {
+    return <ManageSIPPage onClose={() => setShowManageSIP(false)} />;
+  }
+  if (showJewellery) {
+    return <JewelleryFlow onClose={() => setShowJewellery(false)} />;
+  }
+
+
+
   // Show loading skeleton while checking viewport
   if (isLoading) {
     return (
@@ -105,6 +126,8 @@ export function MainApp({ user }: MainAppProps) {
         return (
           <HomeTab
             onBuyGold={() => setShowBuyFlow(true)}
+            onSellGold={() => setShowSellFlow(true)}
+            onJewellery={() => setShowJewellery(true)}
             onOpenSIPCalculator={() => setShowSIPCalculator(true)}
             onOpenReferral={() => setShowReferral(true)}
             onOpenGiftGold={() => setShowGiftGold(true)}
@@ -113,11 +136,11 @@ export function MainApp({ user }: MainAppProps) {
           />
         );
       case "wallet":
-        return <WalletTab />;
+        return <WalletTab onOpenManageSIP={() => setShowManageSIP(true)} />;
       case "partners":
         return <PartnersTab />;
       case "loans":
-        return <LoansTab />;
+        return <LoansTab onOpenApplyLoan={() => setShowApplyLoan(true)} />;
       case "profile":
         return <ProfileTab user={user} />;
       default:
@@ -127,10 +150,9 @@ export function MainApp({ user }: MainAppProps) {
 
   const renderDesktopSidebar = () => (
     <div
-    className={`fixed top-0 left-0 hidden h-full min-h-screen flex-col border-r border-gray-200 bg-white transition-all duration-300 lg:flex dark:border-neutral-700 dark:bg-neutral-800 ${
-      sidebarCollapsed ? "w-20" : "w-64"
-    }`}
-  >
+      className={`fixed top-0 left-0 hidden h-full min-h-screen flex-col border-r border-gray-200 bg-white transition-all duration-300 lg:flex dark:border-neutral-700 dark:bg-neutral-800 ${sidebarCollapsed ? "w-20" : "w-64"
+        }`}
+    >
       {/* Sidebar Header */}
       <div className="border-b border-gray-200 p-6 dark:border-neutral-700">
         {!sidebarCollapsed ? (
@@ -157,7 +179,7 @@ export function MainApp({ user }: MainAppProps) {
       </div>
 
       {/* Navigation Items */}
-      <nav className="flex-1 space-y-2 overflow-y-auto p-4">
+      <nav className="flex-1 space-y-2 overflow-y-auto p-4 custom_scrollbar">
         {[
           { id: "home", icon: Home, label: "Home" },
           { id: "wallet", icon: Wallet, label: "Wallet" },
@@ -168,11 +190,10 @@ export function MainApp({ user }: MainAppProps) {
           <button
             key={item.id}
             onClick={() => goToTab(item.id as Tab)}
-            className={`flex w-full items-center gap-3 rounded-lg p-3 transition-colors ${
-              activeTab === item.id
-                ? "bg-[#cebcf1] text-[#3D3066] dark:bg-neutral-700 dark:text-white"
-                : "text-gray-700 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
-            }`}
+            className={`flex w-full items-center gap-3 rounded-lg p-3 transition-colors ${activeTab === item.id
+              ? "bg-[#cebcf1] text-[#3D3066] dark:bg-neutral-700 dark:text-white"
+              : "text-gray-700 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
+              }`}
           >
             <item.icon className="h-5 w-5 flex-shrink-0" />
             {!sidebarCollapsed && (
@@ -272,6 +293,15 @@ export function MainApp({ user }: MainAppProps) {
             onBuyGold={() => setShowBuyFlow(true)}
           />
         )}
+        {showApplyLoan && (
+          <ApplyLoan
+            isOpen={showApplyLoan}
+            onClose={() => setShowApplyLoan(false)}
+            eligibleGold={10.547}
+            maxLoanAmount={47463}
+            interestRate={9.5}
+          />
+        )}
       </div>
     );
   }
@@ -281,20 +311,7 @@ export function MainApp({ user }: MainAppProps) {
     <div className="min-h-screen bg-gray-50 pb-20 dark:bg-neutral-900">
       {/* Main Content - Removed max-width constraint for mobile */}
       <div className="w-full">
-        {activeTab === "home" && (
-          <HomeTab
-            onBuyGold={() => setShowBuyFlow(true)}
-            onOpenSIPCalculator={() => setShowSIPCalculator(true)}
-            onOpenReferral={() => setShowReferral(true)}
-            onOpenGiftGold={() => setShowGiftGold(true)}
-            onOpenAuspiciousDays={() => setShowAuspiciousDays(true)}
-            onOpenGoldGoals={() => setShowGoldGoals(true)}
-          />
-        )}
-        {activeTab === "wallet" && <WalletTab />}
-        {activeTab === "partners" && <PartnersTab />}
-        {activeTab === "loans" && <LoansTab />}
-        {activeTab === "profile" && <ProfileTab user={user} />}
+        {renderTabContent()}
       </div>
 
       {/* Modals */}
@@ -313,6 +330,15 @@ export function MainApp({ user }: MainAppProps) {
           onClose={() => setShowGoldGoals(false)}
           mode="view"
           onBuyGold={() => setShowBuyFlow(true)}
+        />
+      )}
+      {showApplyLoan && (
+        <ApplyLoan
+          isOpen={showApplyLoan}
+          onClose={() => setShowApplyLoan(false)}
+          eligibleGold={10.547}
+          maxLoanAmount={47463}
+          interestRate={9.5}
         />
       )}
 
@@ -407,11 +433,10 @@ export function MainApp({ user }: MainAppProps) {
           <div className="flex items-center justify-around">
             <button
               onClick={() => goToTab("home")}
-              className={`flex flex-col items-center gap-1 rounded-lg px-4 py-2 transition-colors ${
-                activeTab === "home"
-                  ? "bg-[#F3F1F7] text-[#3D3066] dark:bg-neutral-700 dark:text-white"
-                  : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
-              }`}
+              className={`flex flex-col items-center gap-1 rounded-lg px-4 py-2 transition-colors ${activeTab === "home"
+                ? "bg-[#F3F1F7] text-[#3D3066] dark:bg-neutral-700 dark:text-white"
+                : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
+                }`}
             >
               <Home className="h-6 w-6" />
               <span className="text-xs">Home</span>
@@ -419,11 +444,10 @@ export function MainApp({ user }: MainAppProps) {
 
             <button
               onClick={() => goToTab("wallet")}
-              className={`flex flex-col items-center gap-1 rounded-lg px-4 py-2 transition-colors ${
-                activeTab === "wallet"
-                  ? "bg-[#F3F1F7] text-[#3D3066] dark:bg-neutral-700 dark:text-white"
-                  : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
-              }`}
+              className={`flex flex-col items-center gap-1 rounded-lg px-4 py-2 transition-colors ${activeTab === "wallet"
+                ? "bg-[#F3F1F7] text-[#3D3066] dark:bg-neutral-700 dark:text-white"
+                : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
+                }`}
             >
               <Wallet className="h-6 w-6" />
               <span className="text-xs">Wallet</span>
@@ -431,11 +455,10 @@ export function MainApp({ user }: MainAppProps) {
 
             <button
               onClick={() => goToTab("partners")}
-              className={`flex flex-col items-center gap-1 rounded-lg px-4 py-2 transition-colors ${
-                activeTab === "partners"
-                  ? "bg-[#F3F1F7] text-[#3D3066] dark:bg-neutral-700 dark:text-white"
-                  : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
-              }`}
+              className={`flex flex-col items-center gap-1 rounded-lg px-4 py-2 transition-colors ${activeTab === "partners"
+                ? "bg-[#F3F1F7] text-[#3D3066] dark:bg-neutral-700 dark:text-white"
+                : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
+                }`}
             >
               <MapPin className="h-6 w-6" />
               <span className="text-xs">Partners</span>
@@ -443,11 +466,10 @@ export function MainApp({ user }: MainAppProps) {
 
             <button
               onClick={() => goToTab("loans")}
-              className={`flex flex-col items-center gap-1 rounded-lg px-4 py-2 transition-colors ${
-                activeTab === "loans"
-                  ? "bg-[#F3F1F7] text-[#3D3066] dark:bg-neutral-700 dark:text-white"
-                  : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
-              }`}
+              className={`flex flex-col items-center gap-1 rounded-lg px-4 py-2 transition-colors ${activeTab === "loans"
+                ? "bg-[#F3F1F7] text-[#3D3066] dark:bg-neutral-700 dark:text-white"
+                : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
+                }`}
             >
               <Banknote className="h-6 w-6" />
               <span className="text-xs">Loans</span>
@@ -455,11 +477,10 @@ export function MainApp({ user }: MainAppProps) {
 
             <button
               onClick={() => goToTab("profile")}
-              className={`flex flex-col items-center gap-1 rounded-lg px-4 py-2 transition-colors ${
-                activeTab === "profile"
-                  ? "bg-[#F3F1F7] text-[#3D3066] dark:bg-neutral-700 dark:text-white"
-                  : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
-              }`}
+              className={`flex flex-col items-center gap-1 rounded-lg px-4 py-2 transition-colors ${activeTab === "profile"
+                ? "bg-[#F3F1F7] text-[#3D3066] dark:bg-neutral-700 dark:text-white"
+                : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
+                }`}
             >
               <User className="h-6 w-6" />
               <span className="text-xs">Profile</span>

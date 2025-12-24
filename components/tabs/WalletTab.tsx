@@ -18,7 +18,11 @@ import {
 } from "lucide-react";
 import { ZoldLogoHorizontal } from "@/components/ZoldLogo";
 
-export function WalletTab() {
+interface WalletTabProps {
+  onOpenManageSIP: () => void;
+}
+
+export function WalletTab({ onOpenManageSIP }: WalletTabProps) {
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [showGraph, setShowGraph] = useState(true);
   const [graphPeriod, setGraphPeriod] = useState("1M");
@@ -337,7 +341,7 @@ export function WalletTab() {
             </div>
             <Calendar className="h-6 w-6 text-white/80" />
           </div>
-          <button className="w-full rounded-lg bg-white px-4 py-2 text-sm text-purple-600 transition-colors hover:bg-purple-50 dark:bg-white/20 dark:text-white dark:hover:bg-white/30">
+          <button onClick={onOpenManageSIP} className="w-full rounded-lg bg-white px-4 py-2 text-sm text-purple-600 transition-colors hover:bg-purple-50 dark:bg-white/20 dark:text-white dark:hover:bg-white/30">
             Manage SIP
           </button>
         </div>
