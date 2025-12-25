@@ -15,9 +15,11 @@ import { ZoldLogoHorizontal } from "@/components/ZoldLogo";
 
 interface LoansTabProps {
   onOpenApplyLoan: () => void;
+  onOpenApplyLoanpage: () => void;
+  onOpenPartners: () => void; 
 }
 
-export function LoansTab({ onOpenApplyLoan }: LoansTabProps) {
+export function LoansTab({ onOpenApplyLoan, onOpenApplyLoanpage, onOpenPartners }: LoansTabProps) {
   const [selectedTab, setSelectedTab] = useState<"overview" | "active">(
     "overview",
   );
@@ -85,21 +87,19 @@ export function LoansTab({ onOpenApplyLoan }: LoansTabProps) {
         <div className="mb-6 flex rounded-xl bg-white p-1 shadow-lg dark:bg-neutral-800 dark:shadow-neutral-900/50">
           <button
             onClick={() => setSelectedTab("overview")}
-            className={`flex-1 rounded-lg py-2 transition-colors ${
-              selectedTab === "overview"
+            className={`flex-1 rounded-lg py-2 transition-colors ${selectedTab === "overview"
                 ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
                 : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
-            }`}
+              }`}
           >
             Overview
           </button>
           <button
             onClick={() => setSelectedTab("active")}
-            className={`relative flex-1 rounded-lg py-2 transition-colors ${
-              selectedTab === "active"
+            className={`relative flex-1 rounded-lg py-2 transition-colors ${selectedTab === "active"
                 ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
                 : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
-            }`}
+              }`}
           >
             Active Loans
             {activeLoans.length > 0 && (
@@ -206,7 +206,10 @@ export function LoansTab({ onOpenApplyLoan }: LoansTabProps) {
                       </div>
                     </div>
                   </div>
-                  <button className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white py-3 text-gray-700 transition-colors hover:bg-gray-50 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600">
+                  <button
+                    onClick={onOpenPartners} // Directly use the prop
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white py-3 text-gray-700 transition-colors hover:bg-gray-50 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600"
+                  >
                     Find Nearby Partners
                     <ChevronRight className="h-5 w-5" />
                   </button>
@@ -273,7 +276,7 @@ export function LoansTab({ onOpenApplyLoan }: LoansTabProps) {
                   </div>
                 </div>
 
-                <button className="w-full rounded-lg bg-[#3D3066] py-3 text-white transition-colors hover:bg-[#5C4E7F] dark:bg-[#4D3F7F] dark:hover:bg-[#5C4E9F]">
+                <button onClick={onOpenApplyLoanpage} className="w-full rounded-lg bg-[#3D3066] py-3 text-white transition-colors hover:bg-[#5C4E7F] dark:bg-[#4D3F7F] dark:hover:bg-[#5C4E9F]">
                   Apply for This Loan
                 </button>
               </div>

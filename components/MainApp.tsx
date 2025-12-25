@@ -28,6 +28,7 @@ import { GiftGold } from "./GiftGold";
 import { AuspiciousDays } from "./AuspiciousDays";
 import { GoldGoals } from "./GoldGoals";
 import { ApplyLoan } from "./ApplyLoan";
+import { ApplyLoanPage } from "./ApplyLoanPage";
 
 
 type Tab = "home" | "wallet" | "partners" | "loans" | "profile";
@@ -52,6 +53,7 @@ export function MainApp({ user }: MainAppProps) {
   const [showQuickMenu, setShowQuickMenu] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [showApplyLoanPage, setShowApplyLoanPage] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   // Check for desktop viewport
@@ -147,7 +149,13 @@ export function MainApp({ user }: MainAppProps) {
       case "partners":
         return <PartnersTab />;
       case "loans":
-        return <LoansTab onOpenApplyLoan={() => setShowApplyLoan(true)} />;
+        return (
+          <LoansTab
+            onOpenApplyLoan={() => setShowApplyLoan(true)}
+            onOpenPartners={() => goToTab("partners")}
+            onOpenApplyLoanpage={() => setShowApplyLoanPage(true)}
+          />
+        );
       case "profile":
         return <ProfileTab user={user} onLogout={handleLogout} />;
       default:
@@ -309,6 +317,15 @@ export function MainApp({ user }: MainAppProps) {
             interestRate={9.5}
           />
         )}
+        {showApplyLoanPage && (
+          <ApplyLoanPage
+            onBack={() => setShowApplyLoanPage(false)}
+            goldPledged={10.547}
+            loanAmount={47463}
+            interestRate={9.5}
+            tenureMonths={6}
+          />
+        )}
       </div>
     );
   }
@@ -348,6 +365,15 @@ export function MainApp({ user }: MainAppProps) {
           interestRate={9.5}
         />
       )}
+      {showApplyLoanPage && (
+          <ApplyLoanPage
+            onBack={() => setShowApplyLoanPage(false)}
+            goldPledged={10.547}
+            loanAmount={47463}
+            interestRate={9.5}
+            tenureMonths={6}
+          />
+        )}
 
       {/* Quick Action Menu */}
       {showQuickMenu && (

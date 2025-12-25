@@ -23,7 +23,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} h-screen bg-white antialiased dark:bg-neutral-600`}
       >
-        <ThemeProvider attribute="class">
+        <ThemeProvider defaultTheme="light" enableSystem={false} attribute="class">
           {children}
         </ThemeProvider>
       </body>
