@@ -3,38 +3,68 @@ import { ChevronRight } from "lucide-react";
 import { ZoldLogo } from "@/components/ZoldLogo";
 
 interface LoginScreenProps {
-  onComplete: (userData: any) => void;
+  onComplete: (userData: any, isSignup: boolean) => void;
 }
 
 export function LoginScreen({ onComplete }: LoginScreenProps) {
-  const [step, setStep] = useState<"phone" | "otp" | "details">("phone");
-  const [phone, setPhone] = useState("");
+  // Steps: 'login' (Username/Pass), 'signup_form' (Initial Details), 'signup_otp' (Verify), 'signup_details' (Profile - City/Email)
+  const [step, setStep] = useState<"login" | "signup_form" | "signup_otp" | "signup_details">("login");
+
+  // Login State
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  // Sign Up State
+  const [signupName, setSignupName] = useState("");
+  const [signupUsername, setSignupUsername] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [signupPhone, setSignupPhone] = useState("");
+
   const [otp, setOtp] = useState("");
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [city, setCity] = useState("");
   const [referralCode, setReferralCode] = useState("");
   const [showReferral, setShowReferral] = useState(false);
 
-  const handlePhoneSubmit = (e: React.FormEvent) => {
+  // Handlers
+  const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (phone.length === 10) {
-      setStep("otp");
+    if (username && password) {
+      // Simulate login
+      onComplete({ name: "User", phone: "9876543210", email: username, city: "Demo City" }, false); // Mock data
+    }
+  };
+
+  const handleSignupFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (signupName && signupUsername && signupPassword && signupPhone.length === 10) {
+      setStep("signup_otp");
     }
   };
 
   const handleOTPSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.length === 6) {
-      setStep("details");
+      setStep("signup_details");
     }
   };
 
   const handleDetailsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name && city) {
-      onComplete({ phone, name, email, city, referralCode });
+    if (city) {
+      onComplete({
+        phone: signupPhone,
+        name: signupName,
+        email,
+        city,
+        referralCode,
+        username: signupUsername
+      }, true);
     }
+  };
+
+  const handleResendOTP = () => {
+    alert("OTP Resent!");
   };
 
   return (
@@ -46,23 +76,112 @@ export function LoginScreen({ onComplete }: LoginScreenProps) {
 
       {/* Form Card */}
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
-        {step === "phone" && (
-          <form onSubmit={handlePhoneSubmit}>
-            <h2 className="mb-2 text-black dark:text-black">Welcome</h2>
+
+        {/* LOGIN SCREEN: Username & Password */}
+        {step === "login" && (
+          <form onSubmit={handleLoginSubmit}>
+            <h2 className="mb-2 text-black dark:text-black">Welcome Back</h2>
             <p className="mb-6 text-gray-600">
-              Enter your phone number to continue
+              Login to continue
             </p>
 
             <div className="mb-4">
-              <label className="mb-2 block text-gray-700">Phone Number</label>
+              <label className="mb-2 block text-gray-700">Username</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter username"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-800 focus:ring-2 focus:ring-[#8B7FA8] focus:outline-none"
+              />
+            </div>
+
+            <div className="mb-6">
+              <label className="mb-2 block text-gray-700">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-800 focus:ring-2 focus:ring-[#8B7FA8] focus:outline-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={!username || !password}
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#3D3066] py-3 text-white transition-colors hover:bg-[#5C4E7F] disabled:cursor-not-allowed disabled:bg-gray-300"
+            >
+              Login
+              <ChevronRight className="h-5 w-5" />
+            </button>
+
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600">
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => setStep("signup_form")}
+                  className="font-medium text-[#3D3066] hover:underline"
+                >
+                  Sign Up
+                </button>
+              </p>
+            </div>
+          </form>
+        )}
+
+        {/* SIGN UP FORM: Name, Username, Pass, Mobile */}
+        {step === "signup_form" && (
+          <form onSubmit={handleSignupFormSubmit}>
+            <h2 className="mb-2 text-black dark:text-black">Create Account</h2>
+            <p className="mb-6 text-gray-600">
+              Fill in your details to get started
+            </p>
+
+            <div className="mb-4">
+              <label className="mb-2 block text-gray-700">Full Name *</label>
+              <input
+                type="text"
+                value={signupName}
+                onChange={(e) => setSignupName(e.target.value)}
+                placeholder="Enter full name"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-800 focus:ring-2 focus:ring-[#8B7FA8] focus:outline-none"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="mb-2 block text-gray-700">Username *</label>
+              <input
+                type="text"
+                value={signupUsername}
+                onChange={(e) => setSignupUsername(e.target.value)}
+                placeholder="Choose a username"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-800 focus:ring-2 focus:ring-[#8B7FA8] focus:outline-none"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="mb-2 block text-gray-700">Password *</label>
+              <input
+                type="password"
+                value={signupPassword}
+                onChange={(e) => setSignupPassword(e.target.value)}
+                placeholder="Create a password"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-800 focus:ring-2 focus:ring-[#8B7FA8] focus:outline-none"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="mb-2 block text-gray-700">Phone Number *</label>
               <div className="flex gap-2">
                 <div className="rounded-lg bg-gray-100 px-4 py-3 text-black">
                   +91
                 </div>
                 <input
                   type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value.slice(0, 10))}
+                  value={signupPhone}
+                  onChange={(e) => setSignupPhone(e.target.value.slice(0, 10))}
                   placeholder="Enter 10 digit number"
                   className="flex-1 rounded-lg border border-gray-300 px-4 py-3 text-black focus:ring-2 focus:ring-[#8B7FA8] focus:outline-none"
                   maxLength={10}
@@ -99,20 +218,31 @@ export function LoginScreen({ onComplete }: LoginScreenProps) {
 
             <button
               type="submit"
-              disabled={phone.length !== 10}
+              disabled={!signupName || !signupUsername || !signupPassword || signupPhone.length !== 10}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#3D3066] py-3 text-white transition-colors hover:bg-[#5C4E7F] disabled:cursor-not-allowed disabled:bg-gray-300"
             >
               Get OTP
               <ChevronRight className="h-5 w-5" />
             </button>
+
+            <div className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={() => setStep("login")}
+                className="text-sm text-gray-600 hover:underline"
+              >
+                Back to Login
+              </button>
+            </div>
           </form>
         )}
 
-        {step === "otp" && (
+        {/* SIGN UP: OTP */}
+        {step === "signup_otp" && (
           <form onSubmit={handleOTPSubmit}>
             <h2 className="mb-2 text-black">Verify OTP</h2>
             <p className="mb-6 text-gray-600">
-              Enter the 6-digit code sent to +91 {phone}
+              Enter the 6-digit code sent to +91 {signupPhone}
             </p>
 
             <div className="mb-4">
@@ -126,13 +256,22 @@ export function LoginScreen({ onComplete }: LoginScreenProps) {
               />
             </div>
 
-            <button
-              type="button"
-              onClick={() => setStep("phone")}
-              className="mb-6 text-sm text-gray-600 hover:underline"
-            >
-              Change phone number
-            </button>
+            <div className="mb-6 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setStep("signup_form")}
+                className="text-sm text-gray-600 hover:underline"
+              >
+                Change details
+              </button>
+              <button
+                type="button"
+                onClick={handleResendOTP}
+                className="text-sm font-medium text-[#3D3066] hover:underline"
+              >
+                Resend OTP
+              </button>
+            </div>
 
             <button
               type="submit"
@@ -145,20 +284,15 @@ export function LoginScreen({ onComplete }: LoginScreenProps) {
           </form>
         )}
 
-        {step === "details" && (
+        {/* SIGN UP: Details */}
+        {step === "signup_details" && (
           <form onSubmit={handleDetailsSubmit}>
             <h2 className="mb-2 text-black">Complete Your Profile</h2>
             <p className="mb-6 text-gray-600">Tell us a bit about yourself</p>
 
+            {/* Name already collected */}
             <div className="mb-4">
-              <label className="mb-2 block text-gray-700">Full Name *</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-800 focus:ring-2 focus:ring-[#8B7FA8] focus:outline-none"
-              />
+              <p className="mb-2 text-gray-700">Welcome, <span className="font-semibold">{signupName}</span>!</p>
             </div>
 
             <div className="mb-4">
@@ -187,7 +321,7 @@ export function LoginScreen({ onComplete }: LoginScreenProps) {
 
             <button
               type="submit"
-              disabled={!name || !city}
+              disabled={!city}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#3D3066] py-3 text-white transition-colors hover:bg-[#5C4E7F] disabled:cursor-not-allowed disabled:bg-gray-300"
             >
               Continue

@@ -38,9 +38,10 @@ import { RiskDisclosurePage } from "@/components/RiskDisclosure";
 import { SecurityPrivacyPage } from "../SecurityPrivacyPage";
 interface ProfileTabProps {
   user: any;
+  onLogout: () => void;
 }
 
-export function ProfileTab({ user }: ProfileTabProps) {
+export function ProfileTab({ user, onLogout }: ProfileTabProps) {
   const { theme, setTheme } = useTheme();
 
   const [kycStatus, setKycStatus] = useState<
@@ -97,14 +98,7 @@ export function ProfileTab({ user }: ProfileTabProps) {
   };
 
   const handleLogout = () => {
-    try {
-      localStorage.removeItem("user");
-      localStorage.setItem("appState", "onboarding");
-    } catch (e) {
-      // ignore storage errors
-    }
-    // reload to let the top-level Page component read the new state
-    if (typeof window !== "undefined") window.location.reload();
+    onLogout();
   };
 
   useEffect(() => {
@@ -169,13 +163,12 @@ export function ProfileTab({ user }: ProfileTabProps) {
 
             {/* KYC Status */}
             <div
-              className={`flex items-center gap-2 rounded-lg p-3 ${
-                kycStatus === "verified"
-                  ? "border border-green-300/30 bg-green-500/20 dark:border-green-700/50 dark:bg-green-900/30"
-                  : kycStatus === "pending"
-                    ? "border border-yellow-300/30 bg-yellow-500/20 dark:border-yellow-700/50 dark:bg-yellow-900/30"
-                    : "border border-red-300/30 bg-red-500/20 dark:border-red-700/50 dark:bg-red-900/30"
-              }`}
+              className={`flex items-center gap-2 rounded-lg p-3 ${kycStatus === "verified"
+                ? "border border-green-300/30 bg-green-500/20 dark:border-green-700/50 dark:bg-green-900/30"
+                : kycStatus === "pending"
+                  ? "border border-yellow-300/30 bg-yellow-500/20 dark:border-yellow-700/50 dark:bg-yellow-900/30"
+                  : "border border-red-300/30 bg-red-500/20 dark:border-red-700/50 dark:bg-red-900/30"
+                }`}
             >
               {kycStatus === "verified" ? (
                 <>
@@ -317,19 +310,17 @@ export function ProfileTab({ user }: ProfileTabProps) {
                 </div>
                 <button
                   onClick={handleThemeToggle}
-                  className={`relative h-6 w-12 rounded-full transition-colors ${
-                    darkMode
-                      ? "bg-[#8b6fee] dark:bg-[#8b6fee]"
-                      : "bg-gray-300 dark:bg-neutral-600"
-                  }`}
+                  className={`relative h-6 w-12 rounded-full transition-colors ${darkMode
+                    ? "bg-[#8b6fee] dark:bg-[#8b6fee]"
+                    : "bg-gray-300 dark:bg-neutral-600"
+                    }`}
                   aria-label={
                     darkMode ? "Switch to light mode" : "Switch to dark mode"
                   }
                 >
                   <div
-                    className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${
-                      darkMode ? "left-1 translate-x-7" : "left-1"
-                    }`}
+                    className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${darkMode ? "left-1 translate-x-7" : "left-1"
+                      }`}
                   />
                 </button>
               </div>
@@ -349,7 +340,7 @@ export function ProfileTab({ user }: ProfileTabProps) {
               </button>
 
               {/* Security */}
-              <button onClick={()=>setShowPrivacySecurity(true)} className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50">
+              <button onClick={() => setShowPrivacySecurity(true)} className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-4 transition-colors hover:bg-gray-50 dark:border-neutral-700 dark:hover:bg-neutral-700/50">
                 <div className="flex items-center gap-3">
                   <Lock className="h-5 w-5 text-gray-600 dark:text-neutral-400" />
                   <span className="text-gray-900 dark:text-white">
