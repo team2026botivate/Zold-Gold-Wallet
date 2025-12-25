@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Home,
   Wallet,
@@ -36,6 +37,7 @@ interface MainAppProps {
 }
 
 export function MainApp({ user }: MainAppProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("home");
   const [showBuyFlow, setShowBuyFlow] = useState(false);
   const [showSellFlow, setShowSellFlow] = useState(false);
@@ -95,6 +97,11 @@ export function MainApp({ user }: MainAppProps) {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("appState");
+    router.push("/onboarding");
+  };
+
   if (showBuyFlow) {
     return <BuyGoldFlow onClose={() => setShowBuyFlow(false)} />;
   }
@@ -142,7 +149,7 @@ export function MainApp({ user }: MainAppProps) {
       case "loans":
         return <LoansTab onOpenApplyLoan={() => setShowApplyLoan(true)} />;
       case "profile":
-        return <ProfileTab user={user} />;
+        return <ProfileTab user={user} onLogout={handleLogout} />;
       default:
         return null;
     }
