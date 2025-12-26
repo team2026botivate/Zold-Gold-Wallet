@@ -35,12 +35,11 @@ interface Notification {
 }
 
 interface NotificationsPageProps {
-  user: any;
   onClose: () => void;
   isOpen: boolean;
 }
 
-export function NotificationsPage({ user, onClose, isOpen }: NotificationsPageProps) {
+export function NotificationsPage({ onClose, isOpen }: NotificationsPageProps) {
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: "1",
@@ -152,7 +151,7 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
   });
 
   const markAsRead = (id: string) => {
-    setNotifications(notifications.map(notif => 
+    setNotifications(notifications.map(notif =>
       notif.id === id ? { ...notif, read: true } : notif
     ));
   };
@@ -214,7 +213,7 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
     <>
       {/* Overlay */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
           onClick={onClose}
           aria-hidden="true"
@@ -222,7 +221,7 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
       )}
 
       {/* Side Panel */}
-      <div 
+      <div
         className={`
           fixed inset-y-0 right-0 z-50 w-full max-w-md transform overflow-y-auto bg-white shadow-2xl
           transition-all duration-300 ease-in-out dark:bg-neutral-900
@@ -250,7 +249,7 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
               </p>
             </div>
           </div>
-          
+
           <div className="flex gap-2">
             <button
               onClick={markAllAsRead}
@@ -280,51 +279,46 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setFilter("all")}
-                className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
-                  filter === "all"
+                className={`rounded-full px-3 py-1.5 text-sm transition-colors ${filter === "all"
                     ? "bg-[#3D3066] text-white dark:bg-[#8B7FA8]"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                }`}
+                  }`}
               >
                 All ({notifications.length})
               </button>
               <button
                 onClick={() => setFilter("unread")}
-                className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
-                  filter === "unread"
+                className={`rounded-full px-3 py-1.5 text-sm transition-colors ${filter === "unread"
                     ? "bg-[#3D3066] text-white dark:bg-[#8B7FA8]"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                }`}
+                  }`}
               >
                 Unread ({notifications.filter(n => !n.read).length})
               </button>
               <button
                 onClick={() => setFilter("transaction")}
-                className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
-                  filter === "transaction"
+                className={`rounded-full px-3 py-1.5 text-sm transition-colors ${filter === "transaction"
                     ? "bg-[#3D3066] text-white dark:bg-[#8B7FA8]"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                }`}
+                  }`}
               >
                 Transactions
               </button>
               <button
                 onClick={() => setFilter("price")}
-                className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
-                  filter === "price"
+                className={`rounded-full px-3 py-1.5 text-sm transition-colors ${filter === "price"
                     ? "bg-[#3D3066] text-white dark:bg-[#8B7FA8]"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                }`}
+                  }`}
               >
                 Price Alerts
               </button>
               <button
                 onClick={() => setFilter("security")}
-                className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
-                  filter === "security"
+                className={`rounded-full px-3 py-1.5 text-sm transition-colors ${filter === "security"
                     ? "bg-[#3D3066] text-white dark:bg-[#8B7FA8]"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
-                }`}
+                  }`}
               >
                 Security
               </button>
@@ -337,7 +331,7 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
               <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center dark:border-neutral-700">
                 <Bell className="mx-auto h-12 w-12 text-gray-400 dark:text-neutral-500" />
                 <p className="mt-2 text-gray-600 dark:text-neutral-400">
-                  {filter === "unread" 
+                  {filter === "unread"
                     ? "No unread notifications"
                     : "No notifications yet"
                   }
@@ -353,17 +347,16 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
               filteredNotifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`rounded-xl border p-4 transition-all ${
-                    notification.read
+                  className={`rounded-xl border p-4 transition-all ${notification.read
                       ? "border-gray-200 bg-white dark:border-neutral-800 dark:bg-neutral-800/50"
                       : "border-[#3D3066] bg-[#3D3066]/5 dark:border-[#8B7FA8] dark:bg-[#3D3066]/10"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start gap-3">
                     <div className="mt-1">
                       {notification.icon}
                     </div>
-                    
+
                     <div className="flex-1">
                       <div className="mb-2 flex items-start justify-between">
                         <div>
@@ -383,7 +376,7 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
                             )}
                           </div>
                         </div>
-                        
+
                         <div className="flex gap-1">
                           {!notification.read && (
                             <button
@@ -403,11 +396,11 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
                           </button>
                         </div>
                       </div>
-                      
+
                       <p className="mb-3 text-gray-700 dark:text-neutral-300">
                         {notification.message}
                       </p>
-                      
+
                       {notification.action && (
                         <button className="text-sm font-medium text-[#3D3066] hover:text-[#5C4E7F] dark:text-[#8B7FA8] dark:hover:text-[#A59BC0]">
                           {notification.action} →
@@ -452,16 +445,14 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
                     </div>
                     <button
                       onClick={() => handleNotificationSettingChange("priceAlerts")}
-                      className={`relative h-6 w-12 rounded-full transition-colors ${
-                        notificationSettings.priceAlerts
+                      className={`relative h-6 w-12 rounded-full transition-colors ${notificationSettings.priceAlerts
                           ? "bg-[#3D3066] dark:bg-[#4D3F7F]"
                           : "bg-gray-300 dark:bg-neutral-600"
-                      }`}
+                        }`}
                     >
                       <div
-                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${
-                          notificationSettings.priceAlerts ? "left-1 translate-x-7" : "left-1"
-                        }`}
+                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${notificationSettings.priceAlerts ? "left-1 translate-x-7" : "left-1"
+                          }`}
                       />
                     </button>
                   </div>
@@ -473,16 +464,14 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
                     </div>
                     <button
                       onClick={() => handleNotificationSettingChange("transactions")}
-                      className={`relative h-6 w-12 rounded-full transition-colors ${
-                        notificationSettings.transactions
+                      className={`relative h-6 w-12 rounded-full transition-colors ${notificationSettings.transactions
                           ? "bg-[#3D3066] dark:bg-[#4D3F7F]"
                           : "bg-gray-300 dark:bg-neutral-600"
-                      }`}
+                        }`}
                     >
                       <div
-                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${
-                          notificationSettings.transactions ? "left-1 translate-x-7" : "left-1"
-                        }`}
+                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${notificationSettings.transactions ? "left-1 translate-x-7" : "left-1"
+                          }`}
                       />
                     </button>
                   </div>
@@ -494,16 +483,14 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
                     </div>
                     <button
                       onClick={() => handleNotificationSettingChange("security")}
-                      className={`relative h-6 w-12 rounded-full transition-colors ${
-                        notificationSettings.security
+                      className={`relative h-6 w-12 rounded-full transition-colors ${notificationSettings.security
                           ? "bg-[#3D3066] dark:bg-[#4D3F7F]"
                           : "bg-gray-300 dark:bg-neutral-600"
-                      }`}
+                        }`}
                     >
                       <div
-                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${
-                          notificationSettings.security ? "left-1 translate-x-7" : "left-1"
-                        }`}
+                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${notificationSettings.security ? "left-1 translate-x-7" : "left-1"
+                          }`}
                       />
                     </button>
                   </div>
@@ -515,16 +502,14 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
                     </div>
                     <button
                       onClick={() => handleNotificationSettingChange("marketing")}
-                      className={`relative h-6 w-12 rounded-full transition-colors ${
-                        notificationSettings.marketing
+                      className={`relative h-6 w-12 rounded-full transition-colors ${notificationSettings.marketing
                           ? "bg-[#3D3066] dark:bg-[#4D3F7F]"
                           : "bg-gray-300 dark:bg-neutral-600"
-                      }`}
+                        }`}
                     >
                       <div
-                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${
-                          notificationSettings.marketing ? "left-1 translate-x-7" : "left-1"
-                        }`}
+                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${notificationSettings.marketing ? "left-1 translate-x-7" : "left-1"
+                          }`}
                       />
                     </button>
                   </div>
@@ -536,16 +521,14 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
                     </div>
                     <button
                       onClick={() => handleNotificationSettingChange("system")}
-                      className={`relative h-6 w-12 rounded-full transition-colors ${
-                        notificationSettings.system
+                      className={`relative h-6 w-12 rounded-full transition-colors ${notificationSettings.system
                           ? "bg-[#3D3066] dark:bg-[#4D3F7F]"
                           : "bg-gray-300 dark:bg-neutral-600"
-                      }`}
+                        }`}
                     >
                       <div
-                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${
-                          notificationSettings.system ? "left-1 translate-x-7" : "left-1"
-                        }`}
+                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${notificationSettings.system ? "left-1 translate-x-7" : "left-1"
+                          }`}
                       />
                     </button>
                   </div>
@@ -565,16 +548,14 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
                     </div>
                     <button
                       onClick={() => handleNotificationSettingChange("push")}
-                      className={`relative h-6 w-12 rounded-full transition-colors ${
-                        notificationSettings.push
+                      className={`relative h-6 w-12 rounded-full transition-colors ${notificationSettings.push
                           ? "bg-[#3D3066] dark:bg-[#4D3F7F]"
                           : "bg-gray-300 dark:bg-neutral-600"
-                      }`}
+                        }`}
                     >
                       <div
-                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${
-                          notificationSettings.push ? "left-1 translate-x-7" : "left-1"
-                        }`}
+                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${notificationSettings.push ? "left-1 translate-x-7" : "left-1"
+                          }`}
                       />
                     </button>
                   </div>
@@ -586,16 +567,14 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
                     </div>
                     <button
                       onClick={() => handleNotificationSettingChange("email")}
-                      className={`relative h-6 w-12 rounded-full transition-colors ${
-                        notificationSettings.email
+                      className={`relative h-6 w-12 rounded-full transition-colors ${notificationSettings.email
                           ? "bg-[#3D3066] dark:bg-[#4D3F7F]"
                           : "bg-gray-300 dark:bg-neutral-600"
-                      }`}
+                        }`}
                     >
                       <div
-                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${
-                          notificationSettings.email ? "left-1 translate-x-7" : "left-1"
-                        }`}
+                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${notificationSettings.email ? "left-1 translate-x-7" : "left-1"
+                          }`}
                       />
                     </button>
                   </div>
@@ -607,16 +586,14 @@ export function NotificationsPage({ user, onClose, isOpen }: NotificationsPagePr
                     </div>
                     <button
                       onClick={() => handleNotificationSettingChange("sms")}
-                      className={`relative h-6 w-12 rounded-full transition-colors ${
-                        notificationSettings.sms
+                      className={`relative h-6 w-12 rounded-full transition-colors ${notificationSettings.sms
                           ? "bg-[#3D3066] dark:bg-[#4D3F7F]"
                           : "bg-gray-300 dark:bg-neutral-600"
-                      }`}
+                        }`}
                     >
                       <div
-                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${
-                          notificationSettings.sms ? "left-1 translate-x-7" : "left-1"
-                        }`}
+                        className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-transform ${notificationSettings.sms ? "left-1 translate-x-7" : "left-1"
+                          }`}
                       />
                     </button>
                   </div>

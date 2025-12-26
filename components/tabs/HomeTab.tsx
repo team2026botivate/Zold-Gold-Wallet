@@ -1,3 +1,4 @@
+"use client";
 import {
   TrendingUp,
   TrendingDown,
@@ -19,6 +20,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { ZoldLogo } from "../ZoldLogo";
+import { NotificationsPage } from "@/components/NotificationsPage";
 import {
   LineChart,
   Line,
@@ -30,9 +32,12 @@ import {
   Area,
   AreaChart,
 } from "recharts";
-import { useState } from "react";
+import { HomeTabSkeleton } from "@/components/skeletons/HomeTabSkeleton";
+import { useEffect, useState } from "react";
 
 interface HomeTabProps {
+  isLoading: boolean;
+  onLoadingComplete: () => void;
   onBuyGold: () => void;
   onSellGold: () => void;
   onJewellery: () => void;
@@ -41,9 +46,12 @@ interface HomeTabProps {
   onOpenGiftGold?: () => void;
   onOpenAuspiciousDays?: () => void;
   onOpenGoldGoals?: () => void;
+  onOpenWalletDetails?: () => void;
 }
 
 export function HomeTab({
+  isLoading,
+  onLoadingComplete,
   onBuyGold,
   onSellGold,
   onJewellery,
@@ -52,7 +60,9 @@ export function HomeTab({
   onOpenGiftGold,
   onOpenAuspiciousDays,
   onOpenGoldGoals,
+  onOpenWalletDetails,
 }: HomeTabProps) {
+  const [isInternalLoading, setIsInternalLoading] = useState(true);
   const goldBuyPrice = 6245.5;
   const goldSellPrice = 6198.2;
   const priceChange = 1.2;
@@ -60,9 +70,19 @@ export function HomeTab({
   const userGoldValue = 77845;
   const profitToday = 950;
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInternalLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
   const [chartTimeframe, setChartTimeframe] = useState<
     "1D" | "1W" | "1M" | "1Y"
   >("1D");
+  const [showNotifications, setShowNotifications] = useState(false);
+
+
 
   // Mock price data for different timeframes
   const priceData = {
@@ -102,6 +122,25 @@ export function HomeTab({
     ],
   };
 
+  useEffect(() => {
+    if (
+      showNotifications
+    ) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [
+    showNotifications
+  ]);
+
+  if (isLoading || isInternalLoading) {
+    return <HomeTabSkeleton />;
+  }
+
   return (
     <div className="min-h-screen pb-6 dark:bg-neutral-900 dark:text-gray-100">
       {/* Header */}
@@ -109,13 +148,13 @@ export function HomeTab({
         <div className="mb-6 flex items-center justify-between">
           <ZoldLogo variant="full" size="sm" theme="light" />
           <div className="flex items-center gap-2">
-            <button className="relative rounded-full bg-white/20 p-2 backdrop-blur-sm dark:bg-white/10">
+            <button onClick={() => setShowNotifications(true)} className="relative rounded-full bg-white/20 p-2 backdrop-blur-sm dark:bg-white/10">
               <Bell className="h-5 w-5 text-white dark:text-white/90" />
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
             </button>
-            <div className="rounded-full bg-white/20 p-2 backdrop-blur-sm dark:bg-white/10">
+            {/* <div className="rounded-full bg-white/20 p-2 backdrop-blur-sm dark:bg-white/10">
               <Coins className="h-5 w-5 text-white dark:text-white/90" />
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -181,7 +220,7 @@ export function HomeTab({
               </span>
             </div>
           </div>
-          <button className="w-full rounded-lg bg-[#F3F1F7] py-2 text-[#3D3066] transition-colors hover:bg-[#E5E1F0] dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600">
+          <button onClick={onOpenWalletDetails} className="w-full rounded-lg bg-[#F3F1F7] py-2 text-[#3D3066] transition-colors hover:bg-[#E5E1F0] dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600">
             View Wallet Details
           </button>
         </div>
@@ -207,11 +246,10 @@ export function HomeTab({
               <button
                 key={tf}
                 onClick={() => setChartTimeframe(tf)}
-                className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
-                  chartTimeframe === tf
-                    ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600"
-                }`}
+                className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${chartTimeframe === tf
+                  ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600"
+                  }`}
               >
                 {tf}
               </button>
@@ -566,6 +604,14 @@ export function HomeTab({
           </div>
         </div>
       </div>
+      {/* Notifications Page */}
+      {showNotifications && (
+        <NotificationsPage
+          isOpen={showNotifications}
+          onClose={() => setShowNotifications(false)}
+        />
+      )}
     </div>
+
   );
 }

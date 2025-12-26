@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Coins,
   TrendingUp,
@@ -15,20 +15,27 @@ import {
   ChevronDown,
   Target,
   ChevronRight,
+  ArrowLeft,
 } from "lucide-react";
 import { ZoldLogoHorizontal } from "@/components/ZoldLogo";
+import { WalletTabSkeleton } from "../skeletons/WalletTabSkeleton";
 
 interface WalletTabProps {
-  onOpenManageSIP: () => void;
+  isLoading?: boolean;
+  onOpenManageSIP?: () => void;
+  onBack?: () => void;
 }
 
-export function WalletTab({ onOpenManageSIP }: WalletTabProps) {
+
+
+export function WalletTab({ onOpenManageSIP, onBack }: WalletTabProps) {
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [showGraph, setShowGraph] = useState(true);
   const [graphPeriod, setGraphPeriod] = useState("1M");
   const [searchQuery, setSearchQuery] = useState("");
   const [dateFilter, setDateFilter] = useState("all");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [isInternalLoading, setIsInternalLoading] = useState(true);
 
   const totalGold = 12.547;
   const currentValue = 77845;
@@ -37,6 +44,17 @@ export function WalletTab({ onOpenManageSIP }: WalletTabProps) {
   const profitLossPercent = 1.56;
   const freeGold = 10.547;
   const pledgedGold = 2.0;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInternalLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isInternalLoading) {
+    return <WalletTabSkeleton />;
+  }
 
   const transactions = [
     {
@@ -208,12 +226,21 @@ export function WalletTab({ onOpenManageSIP }: WalletTabProps) {
     <div className="min-h-screen pb-6 dark:bg-neutral-900 dark:text-gray-100">
       {/* Header */}
       <div className="rounded-b-3xl bg-gradient-to-br from-[#3D3066] via-[#5C4E7F] to-[#8B7FA8] px-6 pt-6 pb-8">
-        <ZoldLogoHorizontal
-          size="md"
-          theme="light"
-          showTagline
-          className="mb-6"
-        />
+        <div className="mb-6 flex items-center gap-4">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="rounded-full bg-white/20 p-2 text-white transition-colors hover:bg-white/30"
+            >
+              <ArrowLeft className="h-6 w-6" />
+            </button>
+          )}
+          <ZoldLogoHorizontal
+            size="md"
+            theme="light"
+            showTagline={!onBack}
+          />
+        </div>
 
         {/* Wallet Overview */}
         <div className="rounded-2xl bg-white/10 p-6 backdrop-blur-md dark:bg-white/5">
@@ -257,11 +284,10 @@ export function WalletTab({ onOpenManageSIP }: WalletTabProps) {
               <button
                 key={period}
                 onClick={() => setGraphPeriod(period)}
-                className={`rounded-lg px-3 py-1 text-sm transition-colors ${
-                  graphPeriod === period
+                className={`rounded-lg px-3 py-1 text-sm transition-colors ${graphPeriod === period
                     ? "bg-white text-[#3D3066] dark:bg-neutral-800 dark:text-white"
                     : "bg-white/20 text-white hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20"
-                }`}
+                  }`}
               >
                 {period}
               </button>
@@ -341,7 +367,7 @@ export function WalletTab({ onOpenManageSIP }: WalletTabProps) {
             </div>
             <Calendar className="h-6 w-6 text-white/80" />
           </div>
-          <button onClick={onOpenManageSIP} className="w-full rounded-lg bg-white px-4 py-2 text-sm text-purple-600 transition-colors hover:bg-purple-50 dark:bg-white/20 dark:text-white dark:hover:bg-white/30">
+          <button onClick={() => onOpenManageSIP?.()} className="w-full rounded-lg bg-white px-4 py-2 text-sm text-purple-600 transition-colors hover:bg-purple-50 dark:bg-white/20 dark:text-white dark:hover:bg-white/30">
             Manage SIP
           </button>
         </div>
@@ -441,11 +467,10 @@ export function WalletTab({ onOpenManageSIP }: WalletTabProps) {
               <button
                 key={value}
                 onClick={() => setSelectedFilter(value)}
-                className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm whitespace-nowrap transition-colors ${
-                  selectedFilter === value
+                className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm whitespace-nowrap transition-colors ${selectedFilter === value
                     ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600"
-                }`}
+                  }`}
               >
                 {Icon && <Icon className="h-4 w-4" />}
                 {label}
@@ -457,24 +482,24 @@ export function WalletTab({ onOpenManageSIP }: WalletTabProps) {
           {(searchQuery ||
             dateFilter !== "all" ||
             selectedFilter !== "all") && (
-            <div className="mb-3 flex items-center justify-between text-sm">
-              <p className="text-gray-600 dark:text-neutral-400">
-                Found {filteredTransactions.length} transaction
-                {filteredTransactions.length !== 1 ? "s" : ""}
-              </p>
-              <button
-                onClick={() => {
-                  setSearchQuery("");
-                  setDateFilter("all");
-                  setSelectedFilter("all");
-                }}
-                className="flex items-center gap-1 text-[#3D3066] hover:text-[#5C4E7F] dark:text-[#8B7FA8] dark:hover:text-[#8B7FA8]/80"
-              >
-                <X className="h-3 w-3" />
-                Clear all
-              </button>
-            </div>
-          )}
+              <div className="mb-3 flex items-center justify-between text-sm">
+                <p className="text-gray-600 dark:text-neutral-400">
+                  Found {filteredTransactions.length} transaction
+                  {filteredTransactions.length !== 1 ? "s" : ""}
+                </p>
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setDateFilter("all");
+                    setSelectedFilter("all");
+                  }}
+                  className="flex items-center gap-1 text-[#3D3066] hover:text-[#5C4E7F] dark:text-[#8B7FA8] dark:hover:text-[#8B7FA8]/80"
+                >
+                  <X className="h-3 w-3" />
+                  Clear all
+                </button>
+              </div>
+            )}
 
           {/* Transaction List */}
           <div className="space-y-3">
@@ -501,7 +526,7 @@ export function WalletTab({ onOpenManageSIP }: WalletTabProps) {
                 <div className="text-right">
                   <p className="text-sm text-gray-900 dark:text-white">
                     {transaction.type === "sell" ||
-                    transaction.type === "jewellery"
+                      transaction.type === "jewellery"
                       ? "-"
                       : "+"}
                     {transaction.grams} gm

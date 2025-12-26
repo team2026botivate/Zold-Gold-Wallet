@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { PartnersTabSkeleton } from "@/components/skeletons/PartnersTabSkeleton";
 import {
   MapPin,
   Phone,
@@ -17,25 +19,42 @@ import {
 } from "lucide-react";
 import { ZoldLogoHorizontal } from "@/components/ZoldLogo";
 
+interface PartnerTabProps {
+ isLoading: boolean; 
+}
+
+const PartnersMap = dynamic(() => import("./PartnersMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-96 items-center justify-center bg-gray-100 dark:bg-neutral-700">
+      <Map className="h-16 w-16 text-gray-300 dark:text-neutral-600 animate-pulse" />
+    </div>
+  ),
+});
+
 const partners = [
   {
     id: 1,
-    name: "Shree Ganesh Jewellers",
-    area: "Connaught Place",
-    city: "Delhi",
-    distance: 2.3,
+    name: "Botivate Services LLP",
+    area: "Vidhan sabha road raipur",
+    city: "Raipur",
+    lat: 21.28281,
+    lng: 81.70326,
+    distance: 1,
     rating: 4.8,
     reviews: 234,
-    services: ["pickup", "jewellery", "loan"],
-    offers: ["0% making charges on orders above 10gm"],
-    timings: "10:00 AM - 8:00 PM",
+    services: ["Web Development", "Mobile App Development", "Automation", "AI"],
+    offers: ["10% discount on first order"],
+    timings: "10:00 AM - 6:00 PM",
     phone: "+91 98765 43210",
-  },
+  },  
   {
     id: 2,
     name: "AT Plus Jewellers",
     area: "Lajpat Nagar",
     city: "Delhi",
+    lat: 28.5682,
+    lng: 77.2435,
     distance: 5.1,
     rating: 4.6,
     reviews: 156,
@@ -49,6 +68,8 @@ const partners = [
     name: "Kalyan Jewellers",
     area: "Saket",
     city: "Delhi",
+    lat: 28.5245,
+    lng: 77.2185,
     distance: 7.8,
     rating: 4.9,
     reviews: 412,
@@ -59,12 +80,13 @@ const partners = [
   },
 ];
 
-export function PartnersTab() {
+export function PartnersTab({ isLoading }: PartnerTabProps) {
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPartner, setSelectedPartner] = useState<
     (typeof partners)[0] | null
   >(null);
+  const [isInternalLoading, setIsInternalLoading] = useState(true);
 
   const filteredPartners = partners.filter(
     (partner) =>
@@ -72,6 +94,17 @@ export function PartnersTab() {
       partner.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
       partner.area.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  useEffect(() => {
+      const timer = setTimeout(() => {
+        setIsInternalLoading(false);
+      }, 800);
+      return () => clearTimeout(timer);
+    }, []);
+
+    if (isInternalLoading) {
+      return <PartnersTabSkeleton />;
+    }
 
   return (
     <div className="min-h-screen pb-6 dark:bg-neutral-900 dark:text-gray-100">
@@ -100,22 +133,20 @@ export function PartnersTab() {
         <div className="flex gap-2">
           <button
             onClick={() => setViewMode("list")}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 transition-colors ${
-              viewMode === "list"
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 transition-colors ${viewMode === "list"
                 ? "bg-white text-[#3D3066] dark:bg-neutral-800 dark:text-white"
                 : "bg-white/20 text-white hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20"
-            }`}
+              }`}
           >
             <List className="h-5 w-5" />
             List View
           </button>
           <button
             onClick={() => setViewMode("map")}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 transition-colors ${
-              viewMode === "map"
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 transition-colors ${viewMode === "map"
                 ? "bg-white text-[#3D3066] dark:bg-neutral-800 dark:text-white"
                 : "bg-white/20 text-white hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20"
-            }`}
+              }`}
           >
             <Map className="h-5 w-5" />
             Map View
@@ -203,31 +234,13 @@ export function PartnersTab() {
             )}
           </div>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
-            {/* Map Placeholder */}
-            <div className="relative flex h-96 items-center justify-center bg-gray-100 dark:bg-neutral-700">
-              <Map className="h-16 w-16 text-gray-300 dark:text-neutral-600" />
-              <p className="absolute text-gray-500 dark:text-neutral-400">
-                Map View
-              </p>
-              {/* Map pins overlay */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                {filteredPartners.slice(0, 5).map((partner, index) => (
-                  <div
-                    key={partner.id}
-                    className="absolute cursor-pointer rounded-full bg-[#3D3066] p-2 text-white shadow-lg transition-colors hover:bg-[#5C4E7F] dark:bg-[#4D3F7F] dark:shadow-neutral-900/50 dark:hover:bg-[#5C4E9F]"
-                    style={{
-                      left: `${20 + index * 15}%`,
-                      top: `${30 + index * 10}%`,
-                    }}
-                    onClick={() => setSelectedPartner(partner)}
-                  >
-                    <MapPin className="h-5 w-5" />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="p-4">
+          <div className="overflow-hidden bg-white dark:bg-neutral-800">
+            <PartnersMap
+              partners={filteredPartners}
+              onSelectPartner={setSelectedPartner}
+            />
+
+            <div className="p-4 border border-t-0 border-gray-200 dark:border-neutral-700 rounded-b-xl">
               <p className="text-center text-sm text-gray-600 dark:text-neutral-400">
                 Showing {filteredPartners.length} partners nearby
               </p>

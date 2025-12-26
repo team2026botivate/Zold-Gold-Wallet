@@ -54,7 +54,9 @@ export function MainApp({ user }: MainAppProps) {
   const [isDesktop, setIsDesktop] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showApplyLoanPage, setShowApplyLoanPage] = useState(false);
+  const [showWalletDetails, setShowWalletDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isHomeTabLoading, setIsHomeTabLoading] = useState(true);
 
   // Check for desktop viewport
   useEffect(() => {
@@ -134,6 +136,8 @@ export function MainApp({ user }: MainAppProps) {
       case "home":
         return (
           <HomeTab
+            isLoading={isHomeTabLoading}
+            onLoadingComplete={() => setIsHomeTabLoading(false)}
             onBuyGold={() => setShowBuyFlow(true)}
             onSellGold={() => setShowSellFlow(true)}
             onJewellery={() => setShowJewellery(true)}
@@ -142,6 +146,7 @@ export function MainApp({ user }: MainAppProps) {
             onOpenGiftGold={() => setShowGiftGold(true)}
             onOpenAuspiciousDays={() => setShowAuspiciousDays(true)}
             onOpenGoldGoals={() => setShowGoldGoals(true)}
+            onOpenWalletDetails={() => setShowWalletDetails(true)}
           />
         );
       case "wallet":
@@ -326,6 +331,9 @@ export function MainApp({ user }: MainAppProps) {
             tenureMonths={6}
           />
         )}
+        {showWalletDetails && (
+          <WalletTab onBack={() => setShowWalletDetails(false)} />
+        )}
       </div>
     );
   }
@@ -366,14 +374,17 @@ export function MainApp({ user }: MainAppProps) {
         />
       )}
       {showApplyLoanPage && (
-          <ApplyLoanPage
-            onBack={() => setShowApplyLoanPage(false)}
-            goldPledged={10.547}
-            loanAmount={47463}
-            interestRate={9.5}
-            tenureMonths={6}
-          />
-        )}
+        <ApplyLoanPage
+          onBack={() => setShowApplyLoanPage(false)}
+          goldPledged={10.547}
+          loanAmount={47463}
+          interestRate={9.5}
+          tenureMonths={6}
+        />
+      )}
+      {showWalletDetails && (
+        <WalletTab onBack={() => setShowWalletDetails(false)} />
+      )}
 
       {/* Quick Action Menu */}
       {showQuickMenu && (

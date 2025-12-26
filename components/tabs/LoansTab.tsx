@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Banknote,
   Calculator,
@@ -12,21 +12,31 @@ import {
   Calendar,
 } from "lucide-react";
 import { ZoldLogoHorizontal } from "@/components/ZoldLogo";
+import { LoansTabSkeleton } from "@/components/skeletons/LoansTabSkeleton";
 
 interface LoansTabProps {
   onOpenApplyLoan: () => void;
   onOpenApplyLoanpage: () => void;
   onOpenPartners: () => void; 
+  isLoading: boolean;
 }
 
-export function LoansTab({ onOpenApplyLoan, onOpenApplyLoanpage, onOpenPartners }: LoansTabProps) {
+export function LoansTab({ onOpenApplyLoan, onOpenApplyLoanpage, onOpenPartners, isLoading }: LoansTabProps) {
   const [selectedTab, setSelectedTab] = useState<"overview" | "active">(
     "overview",
   );
+  const [isInternalLoading, setIsInternalLoading] = useState(true);
 
   const eligibleGold = 10.547;
   const maxLoanAmount = 47463; // 75% LTV at 6000/gm
   const interestRate = 9.5;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInternalLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const activeLoans = [
     {
@@ -43,6 +53,10 @@ export function LoansTab({ onOpenApplyLoan, onOpenApplyLoanpage, onOpenPartners 
       status: "active",
     },
   ];
+
+  if (isLoading || isInternalLoading) {
+      return <LoansTabSkeleton />;
+    }
 
   return (
     <div className="min-h-screen pb-6 dark:bg-neutral-900 dark:text-gray-100">

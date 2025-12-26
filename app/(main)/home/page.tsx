@@ -16,6 +16,7 @@ export default function HomePage() {
             onOpenGiftGold={() => router.push("/gift-gold")}
             onOpenAuspiciousDays={() => router.push("/auspicious-days")}
             onOpenGoldGoals={() => router.push("/gold-goals")}
+            onOpenWalletDetails={() => router.push("/wallet-details")}
         />
     );
 }

@@ -36,14 +36,15 @@ import { TermsConditionsPage } from "@/components/Term&Condition";
 import { PrivacyPolicyPage } from "@/components/Privacy&Policy";
 import { RiskDisclosurePage } from "@/components/RiskDisclosure";
 import { SecurityPrivacyPage } from "../SecurityPrivacyPage";
+import { ProfileTabSkeleton } from "@/components/skeletons/ProfileTabSkeleton";
 interface ProfileTabProps {
+  isLoading?: boolean;
   user: any;
   onLogout: () => void;
 }
 
-export function ProfileTab({ user, onLogout }: ProfileTabProps) {
+export function ProfileTab({ user, onLogout, isLoading }: ProfileTabProps) {
   const { theme, setTheme } = useTheme();
-
   const [kycStatus, setKycStatus] = useState<
     "verified" | "pending" | "incomplete"
   >("verified");
@@ -65,6 +66,14 @@ export function ProfileTab({ user, onLogout }: ProfileTabProps) {
     transactions: true,
     marketing: false,
   });
+  const [isInternalLoading, setIsInternalLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInternalLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleCallSupport = () => {
     window.location.href = "tel:+911234567890";
@@ -137,6 +146,10 @@ export function ProfileTab({ user, onLogout }: ProfileTabProps) {
     showRiskDisclosure,
     showPrivacySecurity
   ]);
+
+  if (isInternalLoading) {
+    return <ProfileTabSkeleton />
+  }
 
   return (
     <>
@@ -555,7 +568,6 @@ export function ProfileTab({ user, onLogout }: ProfileTabProps) {
       {/* Notifications Page */}
       {showNotifications && (
         <NotificationsPage
-          user={user}
           isOpen={showNotifications}
           onClose={() => setShowNotifications(false)}
         />
