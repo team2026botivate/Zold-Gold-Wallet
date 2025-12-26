@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ChevronRight } from "lucide-react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface LoginScreenProps {
   onComplete: (userData: any, isSignup: boolean) => void;
@@ -24,6 +25,7 @@ export function LoginScreen({ onComplete }: LoginScreenProps) {
   const [city, setCity] = useState("");
   const [referralCode, setReferralCode] = useState("");
   const [showReferral, setShowReferral] = useState(false);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   // Handlers
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -37,6 +39,11 @@ export function LoginScreen({ onComplete }: LoginScreenProps) {
   const handleSignupFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (signupName && signupUsername && signupPassword && signupPhone.length === 10) {
+      const captchaValue = recaptchaRef.current?.getValue();
+      if (!captchaValue) {
+        alert("Please complete the CAPTCHA");
+        return;
+      }
       setStep("signup_otp");
     }
   };
@@ -72,9 +79,9 @@ export function LoginScreen({ onComplete }: LoginScreenProps) {
       <div className="w-full max-w-xs xs:max-w-sm sm:max-w-md md:max-w-lg rounded-2xl bg-white p-4 xs:p-5 sm:p-6 md:p-8 shadow-xl mx-2 xs:mx-3 sm:mx-4">
         {/* Logo/Image Container */}
         <div className="mb-4 sm:mb-6 md:mb-8 flex items-center justify-center">
-          <img 
-            src="01.jpg" 
-            alt="Zold Logo" 
+          <img
+            src="01.jpg"
+            alt="Zold Logo"
             className="h-16 xs:h-20 sm:h-24 md:h-28 lg:h-32 w-auto rounded-2xl object-cover"
           />
         </div>
@@ -173,7 +180,7 @@ export function LoginScreen({ onComplete }: LoginScreenProps) {
             <div className="mb-4">
               <label className="mb-1 block text-xs xs:text-sm font-medium text-gray-700">Phone Number *</label>
               <div className="flex gap-2">
-                <div className="rounded-lg bg-gray-100 px-3 xs:px-4 py-2 text-black flex items-center text-sm xs:text-base">
+                <div className="rounded-lg bg-gray-100 px-3 xs:px-4 py-3 text-black flex items-center text-sm xs:text-base">
                   +91
                 </div>
                 <input
@@ -181,11 +188,20 @@ export function LoginScreen({ onComplete }: LoginScreenProps) {
                   value={signupPhone}
                   onChange={(e) => setSignupPhone(e.target.value.slice(0, 10))}
                   placeholder="10 digit number"
-                  className="flex-1 rounded-lg border border-gray-300 px-3 xs:px-4 py-2 text-sm xs:text-base text-black focus:ring-2 focus:ring-[#8B7FA8] focus:outline-none"
+                  className="flex-1 rounded-lg border border-gray-300 px-3 xs:px-4 py-3 text-sm xs:text-base text-black focus:ring-2 focus:ring-[#8B7FA8] focus:outline-none"
                   maxLength={10}
                 />
               </div>
             </div>
+
+            <div className="mb-4 flex justify-center">
+              <ReCAPTCHA
+                sitekey="6LcAbjcsAAAAAC_p892D_-ciL3LUT3WIbIBokTge"
+                ref={recaptchaRef}
+              />
+            </div>
+
+
 
             {showReferral && (
               <div className="mb-4">
