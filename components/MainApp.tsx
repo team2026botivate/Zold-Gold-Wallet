@@ -152,10 +152,11 @@ export function MainApp({ user }: MainAppProps) {
       case "wallet":
         return <WalletTab onOpenManageSIP={() => setShowManageSIP(true)} />;
       case "partners":
-        return <PartnersTab />;
+        return <PartnersTab isLoading={false} />;
       case "loans":
         return (
           <LoansTab
+            isLoading={false}
             onOpenApplyLoan={() => setShowApplyLoan(true)}
             onOpenPartners={() => goToTab("partners")}
             onOpenApplyLoanpage={() => setShowApplyLoanPage(true)}

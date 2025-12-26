@@ -3,5 +3,5 @@
 import { PartnersTab } from "@/components/tabs/PartnersTab";
 
 export default function PartnersPage() {
-    return <PartnersTab />;
+    return <PartnersTab isLoading={false} />;
 }

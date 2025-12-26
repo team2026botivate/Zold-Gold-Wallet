@@ -8,6 +8,8 @@ export default function HomePage() {
 
     return (
         <HomeTab
+            isLoading={false}
+            onLoadingComplete={() => { }}
             onBuyGold={() => router.push("/buy-gold")}
             onSellGold={() => router.push("/sell-gold")}
             onJewellery={() => router.push("/jewellery")}
