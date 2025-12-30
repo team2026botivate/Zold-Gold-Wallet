@@ -97,45 +97,7 @@ export function ApplyLoan({ isOpen, onClose, eligibleGold, maxLoanAmount, intere
                                 </div>
                             </button>
 
-                            {/* Partner Store Option */}
-                            <button
-                                onClick={() => setSelectedOption("partner")}
-                                className={`w-full rounded-xl border-2 p-4 text-left transition-all ${selectedOption === "partner"
-                                    ? "border-[#3D3066] bg-[#F3F1F7] dark:border-[#8B7FA8] dark:bg-neutral-700"
-                                    : "border-gray-200 hover:border-[#8B7FA8] dark:border-neutral-700 bg-white dark:bg-neutral-800"
-                                    }`}
-                            >
-                                <div className="flex items-start justify-between">
-                                    <div className="flex-1">
-                                        <div className="mb-2 flex items-center gap-2">
-                                            <AlertCircle className="h-5 w-5 text-red-500" />
-                                            <span className="font-medium text-black dark:text-white">
-                                                Partner Store Loan
-                                            </span>
-                                        </div>
-                                        <p className="mb-3 text-sm text-gray-600 dark:text-neutral-400">
-                                            Higher amounts with partner assistance
-                                        </p>
-                                        <div className="space-y-1 text-sm">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-gray-600 dark:text-neutral-400">
-                                                    Max Amount
-                                                </span>
-                                                <span className="text-black dark:text-white">No Limit</span>
-                                            </div>
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-gray-600 dark:text-neutral-400">
-                                                    Interest Rate
-                                                </span>
-                                                <span className="text-black dark:text-white">{interestRate - 0.5}% p.a.</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {selectedOption === "partner" && (
-                                        <div className="ml-2 h-5 w-5 rounded-full border-4 border-[#3D3066] dark:border-[#8B7FA8]" />
-                                    )}
-                                </div>
-                            </button>
+
                         </div>
                     </div>
 

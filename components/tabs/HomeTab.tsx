@@ -146,7 +146,13 @@ export function HomeTab({
       {/* Header */}
       <div className="rounded-b-3xl bg-gradient-to-br from-[#3D3066] via-[#5C4E7F] to-[#8B7FA8] px-6 pt-6 pb-8">
         <div className="mb-6 flex items-center justify-between">
-          <ZoldLogo variant="full" size="sm" theme="light" />
+          <div className="flex items-center gap-2">
+            <img src="01.jpg" alt="Zold Logo" className="h-16 rounded-2xl" />
+            <div className="flex items-center gap-1 rounded-full bg-green-500/20 px-2 py-0.5 backdrop-blur-sm">
+              <div className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+              <span className="text-[10px] font-medium text-white">KYC Verified</span>
+            </div>
+          </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setShowNotifications(true)} className="relative rounded-full bg-white/20 p-2 backdrop-blur-sm dark:bg-white/10">
               <Bell className="h-5 w-5 text-white dark:text-white/90" />
@@ -529,7 +535,7 @@ export function HomeTab({
         </div>
 
         {/* Partner Highlight */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <h2 className="mb-4 text-black dark:text-white">
             Nearest Zold Partner
           </h2>
@@ -556,6 +562,39 @@ export function HomeTab({
             <button className="w-full rounded-lg bg-[#3D3066] py-2 text-white transition-colors hover:bg-[#5C4E7F] dark:bg-[#4D3F7F] dark:hover:bg-[#5C4E9F]">
               Visit Store
             </button>
+          </div>
+        </div> */}
+
+        {/* Recent Transactions Widget */}
+        <div className="mb-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-black dark:text-white">Recent Transactions</h2>
+            <button onClick={onOpenWalletDetails} className="text-sm text-[#3D3066] dark:text-[#8B7FA8] flex items-center gap-1">
+              See All <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="bg-white dark:bg-neutral-800 rounded-xl p-4 shadow-sm space-y-3">
+            {[
+              { id: 1, type: 'buy', label: 'Bought Gold', amount: '₹15,614', gold: '+2.5 gm', date: 'Today, 2:30 PM' },
+              { id: 2, type: 'sell', label: 'Sold Gold', amount: '₹3,099', gold: '-0.5 gm', date: 'Yesterday' },
+              { id: 3, type: 'sip', label: 'SIP Auto-Invest', amount: '₹5,000', gold: '+0.8 gm', date: '25 Dec 2025' },
+            ].map((tx) => (
+              <div key={tx.id} className="flex items-center justify-between border-b border-gray-100 dark:border-neutral-700 last:border-0 pb-3 last:pb-0">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg ${tx.type === 'buy' || tx.type === 'sip' ? 'bg-green-50 dark:bg-green-900/20 text-green-600' : 'bg-red-50 dark:bg-red-900/20 text-red-600'}`}>
+                    {tx.type === 'sell' ? <TrendingDown className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{tx.label}</p>
+                    <p className="text-xs text-gray-500 dark:text-neutral-500">{tx.date}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className={`text-sm font-medium ${tx.type === 'sell' ? 'text-red-600' : 'text-green-600'}`}>{tx.gold}</p>
+                  <p className="text-xs text-gray-400 dark:text-neutral-500">{tx.amount}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

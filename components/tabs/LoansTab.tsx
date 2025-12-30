@@ -10,6 +10,8 @@ import {
   ChevronRight,
   Info,
   Calendar,
+  FileText,
+  Download,
 } from "lucide-react";
 import { ZoldLogoHorizontal } from "@/components/ZoldLogo";
 import { LoansTabSkeleton } from "@/components/skeletons/LoansTabSkeleton";
@@ -17,7 +19,7 @@ import { LoansTabSkeleton } from "@/components/skeletons/LoansTabSkeleton";
 interface LoansTabProps {
   onOpenApplyLoan: () => void;
   onOpenApplyLoanpage: () => void;
-  onOpenPartners: () => void; 
+  onOpenPartners: () => void;
   isLoading: boolean;
 }
 
@@ -38,6 +40,10 @@ export function LoansTab({ onOpenApplyLoan, onOpenApplyLoanpage, onOpenPartners,
     return () => clearTimeout(timer);
   }, []);
 
+  const handleDownloadDocument = (docName: string) => {
+    alert(`Downloading ${docName}...`);
+  };
+
   const activeLoans = [
     {
       id: 1,
@@ -55,19 +61,14 @@ export function LoansTab({ onOpenApplyLoan, onOpenApplyLoanpage, onOpenPartners,
   ];
 
   if (isLoading || isInternalLoading) {
-      return <LoansTabSkeleton />;
-    }
+    return <LoansTabSkeleton />;
+  }
 
   return (
     <div className="min-h-screen pb-6 dark:bg-neutral-900 dark:text-gray-100">
       {/* Header */}
       <div className="rounded-b-3xl bg-gradient-to-br from-[#3D3066] via-[#5C4E7F] to-[#8B7FA8] px-6 pt-6 pb-8">
-        <ZoldLogoHorizontal
-          size="md"
-          theme="light"
-          showTagline
-          className="mb-4"
-        />
+        <img src="01.jpg" alt="Zold Logo" className="h-16 rounded-xl mb-4" />
 
         {/* Hero Banner */}
         <div className="rounded-2xl bg-white/10 p-6 backdrop-blur-md dark:bg-white/5">
@@ -102,8 +103,8 @@ export function LoansTab({ onOpenApplyLoan, onOpenApplyLoanpage, onOpenPartners,
           <button
             onClick={() => setSelectedTab("overview")}
             className={`flex-1 rounded-lg py-2 transition-colors ${selectedTab === "overview"
-                ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
-                : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
+              ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
+              : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
               }`}
           >
             Overview
@@ -111,8 +112,8 @@ export function LoansTab({ onOpenApplyLoan, onOpenApplyLoanpage, onOpenPartners,
           <button
             onClick={() => setSelectedTab("active")}
             className={`relative flex-1 rounded-lg py-2 transition-colors ${selectedTab === "active"
-                ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
-                : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
+              ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
+              : "text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-700/50"
               }`}
           >
             Active Loans
@@ -290,7 +291,7 @@ export function LoansTab({ onOpenApplyLoan, onOpenApplyLoanpage, onOpenPartners,
                   </div>
                 </div>
 
-                <button onClick={onOpenApplyLoanpage} className="w-full rounded-lg bg-[#3D3066] py-3 text-white transition-colors hover:bg-[#5C4E7F] dark:bg-[#4D3F7F] dark:hover:bg-[#5C4E9F]">
+                <button onClick={onOpenApplyLoan} className="w-full rounded-lg bg-[#3D3066] py-3 text-white transition-colors hover:bg-[#5C4E7F] dark:bg-[#4D3F7F] dark:hover:bg-[#5C4E9F]">
                   Apply for This Loan
                 </button>
               </div>
@@ -397,6 +398,27 @@ export function LoansTab({ onOpenApplyLoan, onOpenApplyLoanpage, onOpenPartners,
                     <button className="flex-1 rounded-lg border border-gray-300 bg-white py-3 text-gray-700 transition-colors hover:bg-gray-50 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600">
                       View Details
                     </button>
+                  </div>
+
+                  {/* Documents */}
+                  <div className="mt-4 border-t border-gray-100 pt-3 dark:border-neutral-700">
+                    <p className="mb-2 text-xs font-semibold text-gray-500 dark:text-neutral-500 uppercase">Documents</p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => handleDownloadDocument("Loan Agreement")}
+                        className="flex items-center gap-1 text-xs text-[#3D3066] hover:underline dark:text-[#8B7FA8]"
+                      >
+                        <FileText className="h-3 w-3" />
+                        Loan Agreement
+                      </button>
+                      <button
+                        onClick={() => handleDownloadDocument("Key Fact Statement (KFS)")}
+                        className="flex items-center gap-1 text-xs text-[#3D3066] hover:underline dark:text-[#8B7FA8]"
+                      >
+                        <Download className="h-3 w-3" />
+                        KFS
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))

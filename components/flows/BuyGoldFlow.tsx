@@ -1,19 +1,35 @@
-import { useState } from 'react';
-import { X, Coins, MapPin, CreditCard, CheckCircle, Info, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { X, Coins, MapPin, CreditCard, CheckCircle, Info, Sparkles, Clock } from 'lucide-react';
 
 interface BuyGoldFlowProps {
   onClose: () => void;
 }
 
-type Step = 'amount' | 'partner' | 'payment' | 'success';
+type Step = 'amount' | 'partner' | 'payment' | 'payment-gateway' | 'success';
 
 export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
+  const router = useRouter();
   const [step, setStep] = useState<Step>('amount');
   const [inputMode, setInputMode] = useState<'rupees' | 'grams'>('rupees');
   const [amount, setAmount] = useState('');
   const [selectedStorage, setSelectedStorage] = useState<'vault' | 'partner'>('vault');
   const [selectedPartner, setSelectedPartner] = useState<number | null>(null);
   const [paymentMethod, setPaymentMethod] = useState('upi');
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+
+  useEffect(() => {
+    if (timeLeft > 0) {
+      const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+      return () => clearInterval(timer);
+    }
+  }, [timeLeft]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
 
   const goldBuyPrice = 6245.50;
   const gstRate = 3; // 3%
@@ -54,7 +70,7 @@ export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
           </div>
           <div className="bg-white/20 dark:bg-white/10 rounded-full px-3 py-1">
             <span className="text-white text-sm">
-              Step {step === 'amount' ? 1 : step === 'partner' ? 2 : step === 'payment' ? 3 : 4} of 3
+              Step {step === 'amount' ? 1 : step === 'partner' ? 2 : step === 'payment' ? 3 : 4} of 4
             </span>
           </div>
         </div>
@@ -67,6 +83,10 @@ export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-4 mb-6 shadow-lg dark:shadow-neutral-900/50">
               <p className="text-gray-600 dark:text-neutral-400 text-sm mb-2">Current Gold Rate (24K)</p>
               <p className="text-gray-900 dark:text-white">₹{goldBuyPrice.toFixed(2)}/gram</p>
+              <div className="mt-2 flex items-center gap-1.5 rounded-lg bg-orange-50 px-3 py-1.5 text-xs text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 w-fit">
+                <Clock className="h-3.5 w-3.5" />
+                <span>Price valid for {formatTime(timeLeft)}</span>
+              </div>
             </div>
 
             {/* Input Mode Toggle */}
@@ -76,11 +96,10 @@ export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
                   setInputMode('rupees');
                   setAmount('');
                 }}
-                className={`flex-1 py-3 rounded-lg transition-colors ${
-                  inputMode === 'rupees'
-                    ? 'bg-[#3D3066] dark:bg-[#4D3F7F] text-white'
-                    : 'bg-white dark:bg-neutral-800 text-gray-700 dark:text-neutral-300 border border-gray-300 dark:border-neutral-700'
-                }`}
+                className={`flex-1 py-3 rounded-lg transition-colors ${inputMode === 'rupees'
+                  ? 'bg-[#3D3066] dark:bg-[#4D3F7F] text-white'
+                  : 'bg-white dark:bg-neutral-800 text-gray-700 dark:text-neutral-300 border border-gray-300 dark:border-neutral-700'
+                  }`}
               >
                 Buy in ₹
               </button>
@@ -89,11 +108,10 @@ export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
                   setInputMode('grams');
                   setAmount('');
                 }}
-                className={`flex-1 py-3 rounded-lg transition-colors ${
-                  inputMode === 'grams'
-                    ? 'bg-[#3D3066] dark:bg-[#4D3F7F] text-white'
-                    : 'bg-white dark:bg-neutral-800 text-gray-700 dark:text-neutral-300 border border-gray-300 dark:border-neutral-700'
-                }`}
+                className={`flex-1 py-3 rounded-lg transition-colors ${inputMode === 'grams'
+                  ? 'bg-[#3D3066] dark:bg-[#4D3F7F] text-white'
+                  : 'bg-white dark:bg-neutral-800 text-gray-700 dark:text-neutral-300 border border-gray-300 dark:border-neutral-700'
+                  }`}
               >
                 Buy in Grams
               </button>
@@ -147,18 +165,16 @@ export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
               <div className="space-y-3">
                 <button
                   onClick={() => setSelectedStorage('vault')}
-                  className={`w-full p-4 rounded-lg border-2 transition-colors text-left ${
-                    selectedStorage === 'vault'
-                      ? 'border-[#3D3066] dark:border-[#8B7FA8] bg-[#F3F1F7] dark:bg-neutral-700'
-                      : 'border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600'
-                  }`}
+                  className={`w-full p-4 rounded-lg border-2 transition-colors text-left ${selectedStorage === 'vault'
+                    ? 'border-[#3D3066] dark:border-[#8B7FA8] bg-[#F3F1F7] dark:bg-neutral-700'
+                    : 'border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600'
+                    }`}
                 >
                   <div className="flex items-center gap-3 mb-2">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      selectedStorage === 'vault' 
-                        ? 'border-[#3D3066] dark:border-[#8B7FA8]' 
-                        : 'border-gray-300 dark:border-neutral-600'
-                    }`}>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedStorage === 'vault'
+                      ? 'border-[#3D3066] dark:border-[#8B7FA8]'
+                      : 'border-gray-300 dark:border-neutral-600'
+                      }`}>
                       {selectedStorage === 'vault' && (
                         <div className="w-3 h-3 rounded-full bg-[#3D3066] dark:bg-[#8B7FA8]" />
                       )}
@@ -170,30 +186,7 @@ export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
                   </p>
                 </button>
 
-                <button
-                  onClick={() => setSelectedStorage('partner')}
-                  className={`w-full p-4 rounded-lg border-2 transition-colors text-left ${
-                    selectedStorage === 'partner'
-                      ? 'border-[#3D3066] dark:border-[#8B7FA8] bg-[#F3F1F7] dark:bg-neutral-700'
-                      : 'border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600'
-                  }`}
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      selectedStorage === 'partner' 
-                        ? 'border-[#3D3066] dark:border-[#8B7FA8]' 
-                        : 'border-gray-300 dark:border-neutral-600'
-                    }`}>
-                      {selectedStorage === 'partner' && (
-                        <div className="w-3 h-3 rounded-full bg-[#3D3066] dark:bg-[#8B7FA8]" />
-                      )}
-                    </div>
-                    <p className="text-gray-900 dark:text-white">Allocate to Partner Store</p>
-                  </div>
-                  <p className="text-gray-600 dark:text-neutral-400 text-sm ml-8">
-                    For easy pickup or jewellery conversion later
-                  </p>
-                </button>
+
               </div>
             </div>
 
@@ -211,7 +204,7 @@ export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
             {/* Price Breakdown */}
             {amount && (
               <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 mb-6 shadow-lg dark:shadow-neutral-900/50">
-                <h3 className="mb-4 dark:text-white">Price Breakdown</h3>
+                <h3 className="text-black mb-4 dark:text-white">Price Breakdown</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-neutral-400">Gold Value</span>
@@ -232,7 +225,7 @@ export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
             {/* Continue Button */}
             <button
               onClick={() => setStep(selectedStorage === 'partner' ? 'partner' : 'payment')}
-              disabled={!amount || parseFloat(amount) < 100}
+              disabled={!amount || rupees < 100}
               className="w-full bg-[#3D3066] dark:bg-[#4D3F7F] text-white py-4 rounded-lg hover:bg-[#5C4E7F] dark:hover:bg-[#5C4E9F] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed dark:disabled:bg-neutral-700"
             >
               Continue to {selectedStorage === 'partner' ? 'Partner Selection' : 'Payment'}
@@ -248,18 +241,16 @@ export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
                 <button
                   key={partner.id}
                   onClick={() => setSelectedPartner(partner.id)}
-                  className={`w-full p-4 rounded-xl border-2 transition-colors text-left ${
-                    selectedPartner === partner.id
-                      ? 'border-[#3D3066] dark:border-[#8B7FA8] bg-[#F3F1F7] dark:bg-neutral-700'
-                      : 'border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:border-gray-300 dark:hover:border-neutral-600'
-                  }`}
+                  className={`w-full p-4 rounded-xl border-2 transition-colors text-left ${selectedPartner === partner.id
+                    ? 'border-[#3D3066] dark:border-[#8B7FA8] bg-[#F3F1F7] dark:bg-neutral-700'
+                    : 'border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:border-gray-300 dark:hover:border-neutral-600'
+                    }`}
                 >
                   <div className="flex items-center gap-3 mb-2">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      selectedPartner === partner.id 
-                        ? 'border-[#3D3066] dark:border-[#8B7FA8]' 
-                        : 'border-gray-300 dark:border-neutral-600'
-                    }`}>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedPartner === partner.id
+                      ? 'border-[#3D3066] dark:border-[#8B7FA8]'
+                      : 'border-gray-300 dark:border-neutral-600'
+                      }`}>
                       {selectedPartner === partner.id && (
                         <div className="w-3 h-3 rounded-full bg-[#3D3066] dark:bg-[#8B7FA8]" />
                       )}
@@ -331,18 +322,16 @@ export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
                   <button
                     key={method.id}
                     onClick={() => setPaymentMethod(method.id)}
-                    className={`w-full p-4 rounded-lg border-2 transition-colors text-left ${
-                      paymentMethod === method.id
-                        ? 'border-[#3D3066] dark:border-[#8B7FA8] bg-[#F3F1F7] dark:bg-neutral-700'
-                        : 'border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600'
-                    }`}
+                    className={`w-full p-4 rounded-lg border-2 transition-colors text-left ${paymentMethod === method.id
+                      ? 'border-[#3D3066] dark:border-[#8B7FA8] bg-[#F3F1F7] dark:bg-neutral-700'
+                      : 'border-gray-200 dark:border-neutral-700 hover:border-gray-300 dark:hover:border-neutral-600'
+                      }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                        paymentMethod === method.id 
-                          ? 'border-[#3D3066] dark:border-[#8B7FA8]' 
-                          : 'border-gray-300 dark:border-neutral-600'
-                      }`}>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === method.id
+                        ? 'border-[#3D3066] dark:border-[#8B7FA8]'
+                        : 'border-gray-300 dark:border-neutral-600'
+                        }`}>
                         {paymentMethod === method.id && (
                           <div className="w-3 h-3 rounded-full bg-[#3D3066] dark:bg-[#8B7FA8]" />
                         )}
@@ -358,6 +347,115 @@ export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(selectedStorage === 'partner' ? 'partner' : 'amount')}
+                className="flex-1 bg-white dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 text-gray-700 dark:text-neutral-300 py-4 rounded-lg hover:bg-gray-50 dark:hover:bg-neutral-700 transition-colors"
+              >
+                Back
+              </button>
+              <button
+                onClick={() => setStep('payment-gateway')}
+                className="flex-1 bg-[#3D3066] dark:bg-[#4D3F7F] text-white py-4 rounded-lg hover:bg-[#5C4E7F] dark:hover:bg-[#5C4E9F] transition-colors"
+              >
+                Continue to Payment
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 'payment-gateway' && (
+          <div>
+            <h2 className="text-black mb-4 dark:text-white">
+              {paymentMethod === 'upi' ? 'Enter UPI ID' :
+                paymentMethod === 'card' ? 'Enter Card Details' :
+                  'Net Banking'}
+            </h2>
+
+            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 mb-6 shadow-lg dark:shadow-neutral-900/50">
+              {paymentMethod === 'upi' && (
+                <div>
+                  <label className="block text-gray-700 dark:text-neutral-300 mb-3">UPI ID</label>
+                  <input
+                    type="text"
+                    placeholder="example@upi"
+                    className="text-black w-full px-4 py-3 border-2 border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FA8]"
+                  />
+                  <p className="text-sm text-gray-500 mt-2">Enter your Virtual Payment Address (VPA)</p>
+                </div>
+              )}
+
+              {paymentMethod === 'card' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-gray-700 dark:text-neutral-300 mb-2">Card Number</label>
+                    <input
+                      type="text"
+                      placeholder="0000 0000 0000 0000"
+                      className="text-black w-full px-4 py-3 border-2 border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FA8]"
+                    />
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <label className="block text-gray-700 dark:text-neutral-300 mb-2">Expiry</label>
+                      <input
+                        type="text"
+                        placeholder="MM/YY"
+                        className="text-black w-full px-4 py-3 border-2 border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FA8]"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-gray-700 dark:text-neutral-300 mb-2">CVV</label>
+                      <input
+                        type="text"
+                        placeholder="123"
+                        className="text-black w-full px-4 py-3 border-2 border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FA8]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {paymentMethod === 'netbanking' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-gray-700 dark:text-neutral-300 mb-2">Account Holder's Name <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      placeholder="Enter Name"
+                      required
+                      className="text-black w-full px-4 py-3 border-2 border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FA8]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 dark:text-neutral-300 mb-2">Bank Account Number <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      placeholder="Enter Account Number"
+                      required
+                      className="text-black w-full px-4 py-3 border-2 border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FA8]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 dark:text-neutral-300 mb-2">Account Type</label>
+                    <select className="text-black w-full px-4 py-3 border-2 border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FA8]">
+                      <option value="savings">Savings</option>
+                      <option value="current">Current</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 dark:text-neutral-300 mb-2">IFSC Code <span className='text-red-500'>*</span></label>
+                    <input
+                      type="text"
+                      placeholder="Enter IFSC Code"
+                      required
+                      className="text-black w-full px-4 py-3 border-2 border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FA8]"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setStep('payment')}
                 className="flex-1 bg-white dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 text-gray-700 dark:text-neutral-300 py-4 rounded-lg hover:bg-gray-50 dark:hover:bg-neutral-700 transition-colors"
               >
                 Back
@@ -395,7 +493,10 @@ export function BuyGoldFlow({ onClose }: BuyGoldFlowProps) {
 
             <div className="space-y-3">
               <button
-                onClick={onClose}
+                onClick={() => {
+                  onClose();
+                  router.push('/wallet');
+                }}
                 className="w-full bg-[#3D3066] dark:bg-[#4D3F7F] text-white py-4 rounded-lg hover:bg-[#5C4E7F] dark:hover:bg-[#5C4E9F] transition-colors"
               >
                 View Wallet

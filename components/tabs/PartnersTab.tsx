@@ -16,11 +16,15 @@ import {
   Package,
   Repeat,
   X,
+  ShieldCheck,
+  Award,
+  BadgeCheck,
+  Plus,
 } from "lucide-react";
 import { ZoldLogoHorizontal } from "@/components/ZoldLogo";
 
 interface PartnerTabProps {
- isLoading: boolean; 
+  isLoading: boolean;
 }
 
 const PartnersMap = dynamic(() => import("./PartnersMap"), {
@@ -47,7 +51,7 @@ const partners = [
     offers: ["10% discount on first order"],
     timings: "10:00 AM - 6:00 PM",
     phone: "+91 98765 43210",
-  },  
+  },
   {
     id: 2,
     name: "AT Plus Jewellers",
@@ -80,6 +84,8 @@ const partners = [
   },
 ];
 
+
+
 export function PartnersTab({ isLoading }: PartnerTabProps) {
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,6 +93,20 @@ export function PartnersTab({ isLoading }: PartnerTabProps) {
     (typeof partners)[0] | null
   >(null);
   const [isInternalLoading, setIsInternalLoading] = useState(true);
+  const [isAddPartnerOpen, setIsAddPartnerOpen] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    area: "",
+    city: "",
+    phone: "",
+    timings: "",
+    rating: "",
+    reviews: "",
+    coordinates: "",
+  });
+
+
 
   const filteredPartners = partners.filter(
     (partner) =>
@@ -96,26 +116,30 @@ export function PartnersTab({ isLoading }: PartnerTabProps) {
   );
 
   useEffect(() => {
-      const timer = setTimeout(() => {
-        setIsInternalLoading(false);
-      }, 800);
-      return () => clearTimeout(timer);
-    }, []);
+    const timer = setTimeout(() => {
+      setIsInternalLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
-    if (isInternalLoading) {
-      return <PartnersTabSkeleton />;
-    }
+  if (isInternalLoading) {
+    return <PartnersTabSkeleton />;
+  }
 
   return (
     <div className="min-h-screen pb-6 dark:bg-neutral-900 dark:text-gray-100">
       {/* Header */}
       <div className="rounded-b-3xl bg-gradient-to-br from-[#3D3066] via-[#5C4E7F] to-[#8B7FA8] px-6 pt-6 pb-6">
-        <ZoldLogoHorizontal
-          size="md"
-          theme="light"
-          showTagline
-          className="mb-4"
-        />
+        <div className="mb-4 flex items-center justify-between">
+          <img src="01.jpg" alt="Zold Logo" className="h-16 rounded-xl" />
+          <button
+            onClick={() => setIsAddPartnerOpen(true)}
+            className="flex items-center gap-2 rounded-lg bg-white/20 px-4 py-2 text-white hover:bg-white/30 transition-colors"
+          >
+            <Plus className="h-5 w-5" />
+            <span>Add Partner</span>
+          </button>
+        </div>
 
         {/* Search Bar */}
         <div className="mb-4 flex items-center gap-2 rounded-lg bg-white px-4 py-3 dark:bg-neutral-800">
@@ -130,12 +154,12 @@ export function PartnersTab({ isLoading }: PartnerTabProps) {
         </div>
 
         {/* View Toggle */}
-        <div className="flex gap-2">
+        <div className="mb-4 flex gap-2">
           <button
             onClick={() => setViewMode("list")}
             className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 transition-colors ${viewMode === "list"
-                ? "bg-white text-[#3D3066] dark:bg-neutral-800 dark:text-white"
-                : "bg-white/20 text-white hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20"
+              ? "bg-white text-[#3D3066] dark:bg-neutral-800 dark:text-white"
+              : "bg-white/20 text-white hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20"
               }`}
           >
             <List className="h-5 w-5" />
@@ -144,13 +168,47 @@ export function PartnersTab({ isLoading }: PartnerTabProps) {
           <button
             onClick={() => setViewMode("map")}
             className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 transition-colors ${viewMode === "map"
-                ? "bg-white text-[#3D3066] dark:bg-neutral-800 dark:text-white"
-                : "bg-white/20 text-white hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20"
+              ? "bg-white text-[#3D3066] dark:bg-neutral-800 dark:text-white"
+              : "bg-white/20 text-white hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20"
               }`}
           >
             <Map className="h-5 w-5" />
             Map View
           </button>
+        </div>
+
+        {/* Certifications Section */}
+        <div className="mb-6 rounded-2xl bg-white p-6 shadow-lg dark:bg-neutral-800 dark:shadow-neutral-900/50">
+          <h3 className="mb-4 text-lg font-semibold text-black dark:text-white">Certifications & Licenses</h3>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-neutral-700 dark:bg-neutral-700/50">
+              <div className="rounded-full bg-yellow-100 p-2 dark:bg-yellow-900/30">
+                <ShieldCheck className="h-6 w-6 text-yellow-600 dark:text-yellow-500" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900 dark:text-white">BIS Hallmarked</p>
+                <p className="text-xs text-gray-500 dark:text-neutral-400">Bureau of Indian Standards</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-neutral-700 dark:bg-neutral-700/50">
+              <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900/30">
+                <Award className="h-6 w-6 text-blue-600 dark:text-blue-500" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900 dark:text-white">ISO 9001:2015</p>
+                <p className="text-xs text-gray-500 dark:text-neutral-400">Quality Management System</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4 dark:border-neutral-700 dark:bg-neutral-700/50">
+              <div className="rounded-full bg-green-100 p-2 dark:bg-green-900/30">
+                <BadgeCheck className="h-6 w-6 text-green-600 dark:text-green-500" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900 dark:text-white">Sequoia Insured</p>
+                <p className="text-xs text-gray-500 dark:text-neutral-400">100% Vault Insurance</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -383,6 +441,130 @@ export function PartnersTab({ isLoading }: PartnerTabProps) {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Partner Modal */}
+      {isAddPartnerOpen && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center dark:bg-black/70">
+          <div className="w-full max-w-lg rounded-t-3xl bg-white p-6 shadow-xl sm:rounded-2xl dark:bg-neutral-800">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Add New Partner
+              </h2>
+              <button
+                onClick={() => setIsAddPartnerOpen(false)}
+                className="rounded-full p-2 hover:bg-gray-100 dark:hover:bg-neutral-700"
+              >
+                <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Partner Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter partner name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full rounded-lg border border-gray-300 p-2.5 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-400"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Area
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Area name"
+                    value={formData.area}
+                    onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 p-2.5 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-400"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="City"
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 p-2.5 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-400"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Timings
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 10:00 AM - 9:00 PM"
+                    value={formData.timings}
+                    onChange={(e) => setFormData({ ...formData, timings: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 p-2.5 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-400"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Coordinates (Lat, Lng)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 21.2514, 81.6296"
+                    value={formData.coordinates}
+                    onChange={(e) => setFormData({ ...formData, coordinates: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 p-2.5 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-400"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  placeholder="+91"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="w-full rounded-lg border border-gray-300 p-2.5 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white dark:placeholder-neutral-400"
+                />
+              </div>
+
+              {/* Hidden fields for data retention visual confirmation if needed, or just keeping them in state */}
+              {formData.rating && (
+                <div className="rounded-lg bg-yellow-50 p-2 text-xs text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300">
+                  Auto-selected: {formData.rating} ★ ({formData.reviews} reviews) • {formData.timings}
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={() => setIsAddPartnerOpen(false)}
+                  className="flex-1 rounded-lg border border-gray-300 bg-white py-2.5 text-gray-700 hover:bg-gray-50 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => setIsAddPartnerOpen(false)}
+                  className="flex-1 rounded-lg bg-[#3D3066] py-2.5 text-white hover:bg-[#5C4E7F] dark:bg-[#4D3F7F] dark:hover:bg-[#5C4E9F]"
+                >
+                  Add Partner
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
       )}

@@ -790,7 +790,7 @@ export function JewelleryFlow({ onClose }: JewelleryFlowProps) {
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="Enter your complete address"
-                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FA8] focus:border-transparent min-h-[120px]"
+                    className="text-black w-full px-4 py-3 border-2 border-gray-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B7FA8] focus:border-transparent min-h-[120px]"
                   />
                   <p className="text-gray-500 dark:text-neutral-400 text-sm mt-2">
                     Our executive will call you to confirm the address

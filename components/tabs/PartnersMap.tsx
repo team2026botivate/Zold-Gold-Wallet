@@ -1,6 +1,6 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useEffect } from "react";
@@ -52,6 +52,19 @@ function MapUpdater({ center }: { center: [number, number] }) {
     return null;
 }
 
+const MapClickHandler = ({
+    onMapClick,
+}: {
+    onMapClick: (lat: number, lng: number) => void;
+}) => {
+    useMapEvents({
+        click: (e) => {
+            onMapClick(e.latlng.lat, e.latlng.lng);
+        },
+    });
+    return null;
+};
+
 export default function PartnersMap({
     partners,
     onSelectPartner,
@@ -64,6 +77,26 @@ export default function PartnersMap({
         partners.length > 0
             ? ([partners[0].lat, partners[0].lng] as [number, number])
             : defaultCenter;
+
+    const handleMapClick = (lat: number, lng: number) => {
+        // Create a temporary partner object for the selected location
+        const customPartner: Partner = {
+            id: Date.now(), // Temporary ID
+            name: "Selected Location",
+            lat: lat,
+            lng: lng,
+            area: "Custom Area",
+            city: "Custom City",
+            distance: 0,
+            rating: 0,
+            reviews: 0,
+            services: [],
+            offers: [],
+            timings: "",
+            phone: "",
+        };
+        onSelectPartner(customPartner);
+    };
 
     return (
         <div className="h-96 w-full overflow-hidden rounded-xl border border-gray-200 dark:border-neutral-700 z-0 relative">
@@ -80,6 +113,7 @@ export default function PartnersMap({
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <MapUpdater center={mapCenter} />
+                <MapClickHandler onMapClick={handleMapClick} />
                 {partners.map((partner) => (
                     <Marker
                         key={partner.id}

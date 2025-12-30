@@ -16,6 +16,7 @@ import {
   Target,
   ChevronRight,
   ArrowLeft,
+  FileText,
 } from "lucide-react";
 import { ZoldLogoHorizontal } from "@/components/ZoldLogo";
 import { WalletTabSkeleton } from "../skeletons/WalletTabSkeleton";
@@ -222,6 +223,10 @@ export function WalletTab({ onOpenManageSIP, onBack }: WalletTabProps) {
     .filter((t) => t.type === "sell")
     .reduce((sum, t) => sum + t.grams, 0);
 
+  const handleDownloadInvoice = (id: number) => {
+    alert(`Downloading invoice for transaction #${id}...`);
+  };
+
   return (
     <div className="min-h-screen pb-6 dark:bg-neutral-900 dark:text-gray-100">
       {/* Header */}
@@ -235,11 +240,7 @@ export function WalletTab({ onOpenManageSIP, onBack }: WalletTabProps) {
               <ArrowLeft className="h-6 w-6" />
             </button>
           )}
-          <ZoldLogoHorizontal
-            size="md"
-            theme="light"
-            showTagline={!onBack}
-          />
+          <img src="01.jpg" alt="Zold Logo" className="h-16 rounded-xl" />
         </div>
 
         {/* Wallet Overview */}
@@ -285,8 +286,8 @@ export function WalletTab({ onOpenManageSIP, onBack }: WalletTabProps) {
                 key={period}
                 onClick={() => setGraphPeriod(period)}
                 className={`rounded-lg px-3 py-1 text-sm transition-colors ${graphPeriod === period
-                    ? "bg-white text-[#3D3066] dark:bg-neutral-800 dark:text-white"
-                    : "bg-white/20 text-white hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20"
+                  ? "bg-white text-[#3D3066] dark:bg-neutral-800 dark:text-white"
+                  : "bg-white/20 text-white hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20"
                   }`}
               >
                 {period}
@@ -468,8 +469,8 @@ export function WalletTab({ onOpenManageSIP, onBack }: WalletTabProps) {
                 key={value}
                 onClick={() => setSelectedFilter(value)}
                 className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm whitespace-nowrap transition-colors ${selectedFilter === value
-                    ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600"
+                  ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-600"
                   }`}
               >
                 {Icon && <Icon className="h-4 w-4" />}
@@ -534,6 +535,18 @@ export function WalletTab({ onOpenManageSIP, onBack }: WalletTabProps) {
                   <p className="text-xs text-gray-500 dark:text-neutral-500">
                     ₹{transaction.amount.toLocaleString()}
                   </p>
+                  {(transaction.type === 'buy' || transaction.type === 'sell') && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDownloadInvoice(transaction.id);
+                      }}
+                      className="mt-1 flex items-center gap-1 text-[10px] text-[#3D3066] hover:underline dark:text-[#8B7FA8] ml-auto"
+                    >
+                      <FileText className="h-3 w-3" />
+                      Invoice
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

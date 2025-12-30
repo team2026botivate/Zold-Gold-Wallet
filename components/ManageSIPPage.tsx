@@ -5,6 +5,7 @@ import {
   TrendingUp,
   ChevronLeft,
   Pause,
+  Play,
   Plus,
   Edit2,
   Trash2,
@@ -41,8 +42,8 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedSIP, setSelectedSIP] = useState<SIP | null>(null);
 
-  // Mock SIP data
-  const activeSIPs: SIP[] = [
+  // Mock SIP data - now state
+  const [activeSIPs, setActiveSIPs] = useState<SIP[]>([
     {
       id: 1,
       name: "Regular Gold SIP",
@@ -67,9 +68,9 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
       goldAccumulated: 0.325,
       totalInvested: 5000,
     },
-  ];
+  ]);
 
-  const sipHistory: SIP[] = [
+  const [sipHistory, setSipHistory] = useState<SIP[]>([
     {
       id: 3,
       name: "Festive Gold SIP",
@@ -94,11 +95,55 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
       goldAccumulated: 0.85,
       totalInvested: 7500,
     },
-  ];
+  ]);
+
+  // Form states
+  const [newSIP, setNewSIP] = useState<Partial<SIP>>({
+    name: "",
+    amount: 1000,
+    frequency: "monthly",
+    startDate: new Date().toISOString().split('T')[0],
+  });
+
+  const handleCreateSIP = () => {
+    if (!newSIP.name || !newSIP.amount) return;
+
+    const sip: SIP = {
+      id: Math.max(...activeSIPs.map((s) => s.id), ...sipHistory.map((s) => s.id), 0) + 1,
+      name: newSIP.name,
+      amount: newSIP.amount,
+      frequency: newSIP.frequency as "daily" | "weekly" | "monthly" || "monthly",
+      dayOfMonth: new Date(newSIP.startDate || Date.now()).getDate(),
+      nextDate: newSIP.startDate || new Date().toISOString().split('T')[0],
+      status: "active",
+      startDate: newSIP.startDate || new Date().toISOString().split('T')[0],
+      goldAccumulated: 0,
+      totalInvested: 0,
+    };
+
+    setActiveSIPs([...activeSIPs, sip]);
+    setShowCreateModal(false);
+    setNewSIP({
+      name: "",
+      amount: 1000,
+      frequency: "monthly",
+      startDate: new Date().toISOString().split('T')[0],
+    });
+  };
 
   const handleEditSIP = (sip: SIP) => {
-    setSelectedSIP(sip);
+    setSelectedSIP({ ...sip }); // Create a copy to avoid direct mutation
     setShowEditModal(true);
+  };
+
+  const handleUpdateSIP = () => {
+    if (!selectedSIP) return;
+
+    setActiveSIPs(
+      activeSIPs.map((sip) => (sip.id === selectedSIP.id ? selectedSIP : sip))
+    );
+    setShowEditModal(false);
+    setSelectedSIP(null);
   };
 
   const handlePauseSIP = (sip: SIP) => {
@@ -106,9 +151,40 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
     setShowPauseModal(true);
   };
 
+  const handlePauseSIPConfirm = () => {
+    if (!selectedSIP) return;
+
+    const updatedStatus = selectedSIP.status === "active" ? "paused" : "active";
+
+    // Update in active list directly for toggle
+    const updatedList = activeSIPs.map(s =>
+      s.id === selectedSIP.id ? { ...s, status: updatedStatus } : s
+    );
+
+    // If it was in history (paused) and we are activating it, we might want to move it back to active? 
+    // For now assuming we only pause active SIPs based on UI buttons.
+    // If we are pausing, we keep it in active list but status changes. 
+
+    setActiveSIPs(updatedList as SIP[]);
+    setShowPauseModal(false);
+    setSelectedSIP(null);
+  };
+
   const handleDeleteSIP = (sip: SIP) => {
     setSelectedSIP(sip);
     setShowDeleteModal(true);
+  };
+
+  const handleCancelSIPConfirm = () => {
+    if (!selectedSIP) return;
+
+    const cancelledSIP = { ...selectedSIP, status: "completed" as const };
+
+    setActiveSIPs(activeSIPs.filter((s) => s.id !== selectedSIP.id));
+    setSipHistory([cancelledSIP, ...sipHistory]);
+
+    setShowDeleteModal(false);
+    setSelectedSIP(null);
   };
 
   const getStatusColor = (status: SIP["status"]) => {
@@ -156,11 +232,7 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
             <ChevronLeft className="h-5 w-5" />
             <span className="text-sm">Back to Wallet</span>
           </button>
-          <ZoldLogoHorizontal
-            size="md"
-            theme="light"
-            showTagline={false}
-          />
+          <img src="01.jpg" alt="zold logo" className="h-16 rounded-xl" />
         </div>
 
         <div className="text-center text-white">
@@ -199,21 +271,19 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
           <div className="flex rounded-t-xl bg-white p-1 dark:bg-neutral-800">
             <button
               onClick={() => setActiveTab("active")}
-              className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
-                activeTab === "active"
-                  ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
-                  : "text-gray-600 hover:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700"
-              }`}
+              className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${activeTab === "active"
+                ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
+                : "text-gray-600 hover:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700"
+                }`}
             >
               Active SIPs ({activeSIPs.length})
             </button>
             <button
               onClick={() => setActiveTab("history")}
-              className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
-                activeTab === "history"
-                  ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
-                  : "text-gray-600 hover:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700"
-              }`}
+              className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${activeTab === "history"
+                ? "bg-[#3D3066] text-white dark:bg-[#4D3F7F]"
+                : "text-gray-600 hover:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700"
+                }`}
             >
               History ({sipHistory.length})
             </button>
@@ -310,7 +380,7 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
                 </div>
 
                 {/* Action Buttons */}
-                {activeTab === "active" && sip.status === "active" && (
+                {activeTab === "active" && (sip.status === "active" || sip.status === "paused") && (
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEditSIP(sip)}
@@ -323,8 +393,17 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
                       onClick={() => handlePauseSIP(sip)}
                       className="flex-1 rounded-lg border border-yellow-500 px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-500 hover:text-white dark:border-yellow-600 dark:text-yellow-400 dark:hover:bg-yellow-600"
                     >
-                      <Pause className="mr-2 inline h-4 w-4" />
-                      Pause
+                      {sip.status === "paused" ? (
+                        <>
+                          <Play className="mr-2 inline h-4 w-4" />
+                          Resume
+                        </>
+                      ) : (
+                        <>
+                          <Pause className="mr-2 inline h-4 w-4" />
+                          Pause
+                        </>
+                      )}
                     </button>
                     <button
                       onClick={() => handleDeleteSIP(sip)}
@@ -393,7 +472,9 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
                 </label>
                 <input
                   type="text"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white"
+                  value={newSIP.name}
+                  onChange={(e) => setNewSIP({ ...newSIP, name: e.target.value })}
+                  className="text-black w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white"
                   placeholder="e.g., Monthly Gold Savings"
                 />
               </div>
@@ -403,7 +484,9 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
                 </label>
                 <input
                   type="number"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white"
+                  value={newSIP.amount}
+                  onChange={(e) => setNewSIP({ ...newSIP, amount: Number(e.target.value) })}
+                  className="text-black w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white"
                   placeholder="e.g., 5000"
                 />
               </div>
@@ -411,7 +494,11 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
                 <label className="mb-2 block text-sm text-gray-700 dark:text-neutral-300">
                   Frequency
                 </label>
-                <select className="w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white">
+                <select
+                  value={newSIP.frequency}
+                  onChange={(e) => setNewSIP({ ...newSIP, frequency: e.target.value as any })}
+                  className="text-black w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white"
+                >
                   <option value="daily">Daily</option>
                   <option value="weekly">Weekly</option>
                   <option value="monthly">Monthly</option>
@@ -423,7 +510,9 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
                 </label>
                 <input
                   type="date"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white"
+                  value={newSIP.startDate}
+                  onChange={(e) => setNewSIP({ ...newSIP, startDate: e.target.value })}
+                  className="text-black w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white"
                 />
               </div>
             </div>
@@ -434,8 +523,83 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
               >
                 Cancel
               </button>
-              <button className="flex-1 rounded-lg bg-[#3D3066] px-4 py-2 text-white hover:bg-[#4D3F7F] dark:bg-[#4D3F7F] dark:hover:bg-[#5C4E7F]">
+              <button
+                onClick={handleCreateSIP}
+                className="flex-1 rounded-lg bg-[#3D3066] px-4 py-2 text-white hover:bg-[#4D3F7F] dark:bg-[#4D3F7F] dark:hover:bg-[#5C4E7F]"
+              >
                 Create SIP
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit SIP Modal */}
+      {showEditModal && selectedSIP && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 dark:bg-neutral-800">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Edit SIP
+              </h3>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="rounded-lg p-1 hover:bg-gray-100 dark:hover:bg-neutral-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="mb-2 block text-sm text-gray-700 dark:text-neutral-300">
+                  SIP Name
+                </label>
+                <input
+                  type="text"
+                  value={selectedSIP.name}
+                  onChange={(e) => setSelectedSIP({ ...selectedSIP, name: e.target.value })}
+                  className="text-black w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm text-gray-700 dark:text-neutral-300">
+                  Investment Amount (₹)
+                </label>
+                <input
+                  type="number"
+                  value={selectedSIP.amount}
+                  onChange={(e) => setSelectedSIP({ ...selectedSIP, amount: Number(e.target.value) })}
+                  className="text-black w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm text-gray-700 dark:text-neutral-300">
+                  Frequency
+                </label>
+                <select
+                  value={selectedSIP.frequency}
+                  onChange={(e) => setSelectedSIP({ ...selectedSIP, frequency: e.target.value as any })}
+                  className="text-black w-full rounded-lg border border-gray-300 px-3 py-2 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white"
+                >
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+            </div>
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 dark:border-neutral-600 dark:text-neutral-400 dark:hover:bg-neutral-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateSIP}
+                className="flex-1 rounded-lg bg-[#3D3066] px-4 py-2 text-white hover:bg-[#4D3F7F] dark:bg-[#4D3F7F] dark:hover:bg-[#5C4E7F]"
+              >
+                Update SIP
               </button>
             </div>
           </div>
@@ -464,8 +628,11 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
               >
                 Cancel
               </button>
-              <button className="flex-1 rounded-lg bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600">
-                Pause SIP
+              <button
+                onClick={handlePauseSIPConfirm}
+                className="flex-1 rounded-lg bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600"
+              >
+                {selectedSIP.status === 'paused' ? 'Resume SIP' : 'Pause SIP'}
               </button>
             </div>
           </div>
@@ -494,7 +661,10 @@ export function ManageSIPPage({ onClose }: ManageSIPPageProps) {
               >
                 Keep SIP
               </button>
-              <button className="flex-1 rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600">
+              <button
+                onClick={handleCancelSIPConfirm}
+                className="flex-1 rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+              >
                 Cancel SIP
               </button>
             </div>
